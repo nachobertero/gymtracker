@@ -397,6 +397,7 @@ const NUTRITION = {
 
 // ─── ESTADO Y DATOS ───────────────────────────
 let workouts = [];
+let weights = [];
 let currentWorkout = null;
 let charts = {};
 
@@ -406,10 +407,16 @@ function loadData() {
     try { workouts = JSON.parse(saved); }
     catch (e) { workouts = []; }
   }
+  const savedWeights = localStorage.getItem('gym_weights_v1');
+  if (savedWeights) {
+    try { weights = JSON.parse(savedWeights); }
+    catch (e) { weights = []; }
+  }
 }
 
 function saveData() {
   localStorage.setItem('gym_workouts_v2', JSON.stringify(workouts));
+  localStorage.setItem('gym_weights_v1', JSON.stringify(weights));
 }
 
 // ─── HELPERS ──────────────────────────────────
@@ -480,6 +487,7 @@ function navigate(page) {
   if (page === 'hist') renderHist();
   if (page === 'anal') renderAnal();
   if (page === 'prog') renderProg();
+  if (page === 'weight') renderWeight();
 }
 
 // ─── TOAST ────────────────────────────────────
@@ -1169,6 +1177,159 @@ function toggleRDay(id) {
     const open = body.classList.toggle('open');
     if (arr) arr.textContent = open ? '▲' : '▼';
   }
+}
+
+// ─── PESO & MEDIDAS ───────────────────────────
+function renderWeight() {
+  const page = document.getElementById('page-weight');
+
+  const currentW = weights.length > 0 ? weights[weights.length - 1].weight : null;
+  const startW = weights.length > 0 ? weights[0].weight : null;
+  const gainW = currentW && startW ? (currentW - startW).toFixed(1) : '—';
+  const weeks = getProgressWeeks();
+  const avgGain = weeks > 0 && gainW !== '—' ? (gainW / weeks).toFixed(2) : '—';
+
+  const chartData = weights.slice(-12).map(w => ({
+    date: formatDate(w.date),
+    weight: w.weight
+  }));
+
+  page.innerHTML = `
+    <h2>Peso & Progreso</h2>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Registrar peso</div>
+      <div class="form-group">
+        <label>Fecha</label>
+        <input type="date" id="weight-date" value="${today()}">
+      </div>
+      <div class="form-group">
+        <label>Peso (kg)</label>
+        <input type="number" id="weight-input" placeholder="58.5" step="0.1" inputmode="decimal" ${currentW ? `value="${currentW}"` : ''}>
+      </div>
+      <button class="btn btn-primary" onclick="saveWeight()">Guardar peso</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-val">${currentW ? currentW + ' kg' : '—'}</div>
+        <div class="stat-lbl">Peso actual</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">${gainW}</div>
+        <div class="stat-lbl">Ganancia total</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">${avgGain}</div>
+        <div class="stat-lbl">kg/semana</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">${weights.length}</div>
+        <div class="stat-lbl">Registros</div>
+      </div>
+    </div>
+
+    ${chartData.length > 0 ? `
+      <div class="chart-card">
+        <div class="chart-title">Progresión de peso (últimas semanas)</div>
+        <div class="chart-wrap"><canvas id="chart-weight"></canvas></div>
+      </div>
+    ` : ''}
+
+    ${weights.length > 0 ? `
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>Historial de peso</div>
+        ${[...weights].reverse().map((w, i) => `
+          <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:700;font-size:15px">${w.weight} kg</div>
+              <div style="font-size:12px;color:var(--muted)">${formatDate(w.date)}</div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="deleteWeight('${w.date}')">✕</button>
+          </div>
+        `).join('')}
+      </div>
+    ` : `
+      <div class="card">
+        <div style="text-align:center;padding:20px;color:var(--muted)">
+          Comienza a registrar tu peso para ver el progreso
+        </div>
+      </div>
+    `}
+  `;
+
+  if (chartData.length > 0) {
+    setTimeout(() => renderWeightChart(), 50);
+  }
+}
+
+function saveWeight() {
+  const dateInput = document.getElementById('weight-date');
+  const weightInput = document.getElementById('weight-input');
+  const date = dateInput.value;
+  const weight = parseFloat(weightInput.value);
+
+  if (!weight || weight <= 0) {
+    toast('Ingresá un peso válido', 'error');
+    return;
+  }
+
+  // Remove existing entry for this date if exists
+  weights = weights.filter(w => w.date !== date);
+  // Add new entry
+  weights.push({ date, weight });
+  // Sort by date
+  weights.sort((a, b) => a.date.localeCompare(b.date));
+
+  saveData();
+  toast('Peso guardado 💪');
+  renderWeight();
+}
+
+function deleteWeight(date) {
+  if (!confirm('¿Eliminar este registro?')) return;
+  weights = weights.filter(w => w.date !== date);
+  saveData();
+  renderWeight();
+  toast('Eliminado');
+}
+
+function renderWeightChart() {
+  const data = weights.slice(-12);
+  const labels = data.map(w => formatDate(w.date));
+  const values = data.map(w => w.weight);
+
+  const ctx = document.getElementById('chart-weight');
+  if (!ctx) return;
+  if (charts.weight) charts.weight.destroy();
+
+  charts.weight = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        borderColor: 'rgba(124,58,237,1)',
+        backgroundColor: 'rgba(124,58,237,0.1)',
+        pointBackgroundColor: 'rgba(124,58,237,1)',
+        pointRadius: 5,
+        tension: 0.3,
+        fill: true,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { backgroundColor: '#22223a', titleColor: '#e4e4f0', bodyColor: '#a78bfa', padding: 10, cornerRadius: 10 }
+      },
+      scales: {
+        x: { ticks: { color: '#6666aa', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: '#6666aa', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
 }
 
 // ─── EXPORT / IMPORT ──────────────────────────
