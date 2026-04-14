@@ -1281,78 +1281,80 @@ function toggleMeal(date, mealName) {
 
 function renderDiet() {
   const page = document.getElementById('page-diet');
+  const today_str = today();
   const dow = getDayOfWeek();
-  const todayPlan = DIET_PLAN[dow];
 
-  if (!todayPlan) {
-    page.innerHTML = '<h2>Dieta</h2><div class="card">Error cargando plan</div>';
-    return;
-  }
+  // Grid con los 7 días
+  const daysOrder = [1, 2, 3, 4, 5, 6, 0];
+  const dayCards = daysOrder.map(dayIndex => {
+    const plan = DIET_PLAN[dayIndex];
+    const isToday = dayIndex === dow;
 
-  const todayDate = today();
-  const mealsList = todayPlan.meals.map(meal => {
-    const key = getDietKey(todayDate, meal.name);
-    const done = dietLog[key] || false;
-    return `
-      <div style="padding:14px;background:var(--surface2);border-radius:12px;margin-bottom:10px;cursor:pointer" onclick="toggleMeal('${todayDate}', '${meal.name.replace(/'/g, "\\'")}')">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-          <div style="font-size:20px">${done ? '✅' : '⭕'}</div>
-          <div>
-            <div style="font-weight:700;font-size:15px;color:${done ? 'var(--success)' : 'var(--text)'}">${meal.name}</div>
-            <div style="font-size:12px;color:var(--accent-l)">${meal.kcal}</div>
+    // Contar comidas completadas de TODOS LOS DÍAS (si existe registro)
+    const completed = plan.meals.filter(m => {
+      // Buscar si hay algún registro completado para este día de la semana en el log
+      // Buscamos cualquier fecha que sea ese día de la semana
+      const keys = Object.keys(dietLog).filter(k => {
+        const [logDateStr, mealName] = k.split('__');
+        return mealName === m.name && getDayOfWeekFromDate(logDateStr) === dayIndex;
+      });
+      return keys.some(k => dietLog[k]);
+    }).length;
+    const total = plan.meals.length;
+
+    const mealsList = plan.meals.map(meal => {
+      const key = getDietKey(today_str, meal.name);
+      const done = dietLog[key] || false;
+      return `
+        <div style="padding:10px;background:var(--surface2);border-radius:8px;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;gap:8px" onclick="toggleMeal('${today_str}', '${meal.name.replace(/'/g, "\\'")}')">
+          <div style="font-size:16px">${done ? '✅' : '⭕'}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;font-size:13px;color:${done ? 'var(--success)' : 'var(--text)'}">${meal.name}</div>
+            <div style="font-size:11px;color:var(--muted)">${meal.items}</div>
           </div>
+          <div style="font-size:11px;color:var(--accent-l);white-space:nowrap">${meal.kcal}</div>
         </div>
-        <div style="font-size:13px;color:var(--muted);margin-left:30px">${meal.items}</div>
+      `;
+    }).join('');
+
+    return `
+      <div class="card" style="border-left:4px solid ${isToday ? 'var(--accent)' : 'var(--border)'}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div>
+            <div style="font-weight:700;font-size:14px">${plan.day}</div>
+            <div style="font-size:12px;color:var(--muted)">${completed}/${total} comidas</div>
+          </div>
+          <div style="font-size:24px">${isToday ? '⭐' : '🍽️'}</div>
+        </div>
+        <div class="prog-wrap" style="margin-bottom:12px">
+          <div class="prog-bar"><div class="prog-fill" style="width:${(completed/total)*100}%"></div></div>
+        </div>
+        ${mealsList}
       </div>
     `;
   }).join('');
 
-  const completed = todayPlan.meals.filter(m => dietLog[getDietKey(todayDate, m.name)]).length;
-  const total = todayPlan.meals.length;
-
   page.innerHTML = `
-    <h2>${todayPlan.day}</h2>
-
-    <div class="card">
-      <div style="text-align:center;padding:10px 0">
-        <div style="font-size:32px;font-weight:800;color:var(--accent-l)">${completed}/${total}</div>
-        <div style="color:var(--muted);margin-top:4px">comidas completadas</div>
-        <div class="prog-wrap" style="margin-top:10px">
-          <div class="prog-bar"><div class="prog-fill" style="width:${(completed/total)*100}%"></div></div>
-        </div>
-      </div>
+    <h2>📋 Dieta Semanal</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:16px">
+      ${dayCards}
     </div>
-
-    <div class="card">
-      <div class="card-title"><span class="dot"></span>Plan del día</div>
-      ${mealsList}
-      <div style="font-size:13px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
-        💡 Clickea en cada comida para marcarla como completada
+    <div class="card" style="margin-top:16px;background:var(--surface2);border-left:4px solid var(--accent)">
+      <div class="card-title"><span class="dot"></span>💡 Cómo funciona</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.6">
+        ✓ Ves los 7 días de la semana en el grid<br>
+        ✓ Clickea en cada comida para marcarla completada<br>
+        ✓ La estrella ⭐ marca el día de hoy<br>
+        ✓ El tracking se guarda automáticamente<br>
+        <strong>Total diario: ~3.150 kcal • 190-200g proteína</strong>
       </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><span class="dot"></span>Resumen nutricional</div>
-      <table style="width:100%;font-size:14px">
-        <tr style="border-bottom:1px solid var(--border)">
-          <td style="padding:8px 0"><strong>Total calorías:</strong></td>
-          <td style="text-align:right;color:var(--accent-l);font-weight:700">~3.150 kcal</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border)">
-          <td style="padding:8px 0"><strong>Proteína estimada:</strong></td>
-          <td style="text-align:right;color:var(--accent-l);font-weight:700">~190-200g</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border)">
-          <td style="padding:8px 0"><strong>Carbohidratos:</strong></td>
-          <td style="text-align:right;color:var(--accent-l);font-weight:700">Complejos (batata, integral)</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 0"><strong>Grasas:</strong></td>
-          <td style="text-align:right;color:var(--accent-l);font-weight:700">Saludables (huevo, frutos secos)</td>
-        </tr>
-      </table>
     </div>
   `;
+}
+
+function getDayOfWeekFromDate(dateStr) {
+  const d = new Date(dateStr);
+  return (d.getDay() || 7) % 7;
 }
 
 // ─── PESO & MEDIDAS ───────────────────────────
