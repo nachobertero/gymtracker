@@ -1290,16 +1290,10 @@ function renderDiet() {
     const plan = DIET_PLAN[dayIndex];
     const isToday = dayIndex === dow;
 
-    // Contar comidas completadas de TODOS LOS DÍAS (si existe registro)
-    const completed = plan.meals.filter(m => {
-      // Buscar si hay algún registro completado para este día de la semana en el log
-      // Buscamos cualquier fecha que sea ese día de la semana
-      const keys = Object.keys(dietLog).filter(k => {
-        const [logDateStr, mealName] = k.split('__');
-        return mealName === m.name && getDayOfWeekFromDate(logDateStr) === dayIndex;
-      });
-      return keys.some(k => dietLog[k]);
-    }).length;
+    // Contar comidas completadas SOLO DE HOY
+    const completed = isToday
+      ? plan.meals.filter(m => dietLog[getDietKey(today_str, m.name)]).length
+      : 0;
     const total = plan.meals.length;
 
     const mealsList = plan.meals.map(meal => {
