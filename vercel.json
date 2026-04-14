@@ -1,17 +1,10 @@
 {
-  "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
-  ],
+  "buildCommand": "",
+  "outputDirectory": ".",
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "index.html"
+      "dest": "/"
     }
-  ],
-  "env": {},
-  "regions": ["sjc1"],
-  "functions": {}
+  ]
 }
