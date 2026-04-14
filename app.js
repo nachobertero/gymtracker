@@ -488,6 +488,7 @@ function navigate(page) {
   if (page === 'anal') renderAnal();
   if (page === 'prog') renderProg();
   if (page === 'weight') renderWeight();
+  if (page === 'diet') renderDiet();
 }
 
 // ─── TOAST ────────────────────────────────────
@@ -1177,6 +1178,181 @@ function toggleRDay(id) {
     const open = body.classList.toggle('open');
     if (arr) arr.textContent = open ? '▲' : '▼';
   }
+}
+
+// ─── PLAN DE DIETA ────────────────────────────
+const DIET_PLAN = {
+  1: { // Lunes
+    day: 'LUNES',
+    meals: [
+      { name: 'Desayuno', items: '5-6 huevos revueltos · 2 rodajas pan integral · 30g nueces · Café sin azúcar', kcal: '~700' },
+      { name: 'Almuerzo', items: '200g pechuga o milanesas · Batata o arroz integral · Ensalada con aceite de oliva', kcal: '~750' },
+      { name: 'Merienda (post-gym)', items: '3-4 huevos hervidos · Pan integral con queso crema · 1 fruta', kcal: '~450' },
+      { name: 'Cena', items: '200g pollo · Verduras salteadas (brócoli, espinaca, zapallo) · Sin fideos', kcal: '~700' },
+      { name: 'Antes de dormir', items: '200g yogur griego sin azúcar · 30g frutos secos', kcal: '~300' },
+    ]
+  },
+  2: { // Martes
+    day: 'MARTES',
+    meals: [
+      { name: 'Desayuno', items: '6 huevos revueltos con queso · Pan integral tostado · Almendras · Café sin azúcar', kcal: '~700' },
+      { name: 'Almuerzo', items: '200g milanesas de pollo · Batata al horno · Lechuga y tomate', kcal: '~750' },
+      { name: 'Merienda (post-gym)', items: '4 huevos hervidos · Queso fresco · 1 banana', kcal: '~450' },
+      { name: 'Cena', items: '200g carne vacuna · Verduras al vapor · Aceite de oliva en ensalada', kcal: '~700' },
+      { name: 'Antes de dormir', items: 'Yogur griego sin azúcar · Nueces y almendras', kcal: '~300' },
+    ]
+  },
+  3: { // Miércoles
+    day: 'MIÉRCOLES',
+    meals: [
+      { name: 'Desayuno', items: '5 huevos revueltos · 2 tostadas integrales · Frutos secos · Té sin azúcar', kcal: '~700' },
+      { name: 'Almuerzo', items: '200g pechuga a la plancha · Quinoa o arroz integral · Ensalada colorida', kcal: '~750' },
+      { name: 'Merienda (post-gym)', items: '3-4 huevos hervidos · Pan integral · Manzana', kcal: '~450' },
+      { name: 'Cena', items: '200g pollo · Calabacín salteado · Ajo y cebolla · Aceite de oliva', kcal: '~700' },
+      { name: 'Antes de dormir', items: 'Queso cottage · Almendras tostadas', kcal: '~300' },
+    ]
+  },
+  4: { // Jueves
+    day: 'JUEVES - DÍA PESADO',
+    meals: [
+      { name: 'Desayuno', items: '6 huevos revueltos · 2 rodajas pan integral · Nueces · Café sin azúcar', kcal: '~700' },
+      { name: 'Almuerzo', items: '200g carne vacuna magra · Batata grande · Ensalada con aguacate', kcal: '~750' },
+      { name: 'Merienda (post-gym ESPECIAL)', items: '5 huevos hervidos · Pan integral · Plátano · Proteína whey (opcional)', kcal: '~500' },
+      { name: 'Cena', items: '200g salmón o pollo · Brócoli al vapor · Aceite de oliva', kcal: '~700' },
+      { name: 'Antes de dormir', items: 'Yogur griego sin azúcar · 40g frutos secos (más que otros días)', kcal: '~350' },
+    ]
+  },
+  5: { // Viernes
+    day: 'VIERNES',
+    meals: [
+      { name: 'Desayuno', items: '5 huevos revueltos · Pan integral tostado · Almendras · Café con CCL', kcal: '~700' },
+      { name: 'Almuerzo', items: '200g pechuga a la plancha · Arroz integral o batata · Ensalada verde', kcal: '~750' },
+      { name: 'Merienda (post-gym)', items: '4 huevos hervidos · Queso fresco · 1 fruta', kcal: '~450' },
+      { name: 'Cena', items: '200g carne vacuna · Verduras salteadas · Aceite de oliva', kcal: '~700' },
+      { name: 'Antes de dormir', items: 'Yogur griego sin azúcar · Frutos secos variados', kcal: '~300' },
+    ]
+  },
+  6: { // Sábado
+    day: 'SÁBADO',
+    meals: [
+      { name: 'Desayuno', items: 'Huevos revueltos · Pan integral · Frutos secos · Bebida sin azúcar', kcal: '~700' },
+      { name: 'Almuerzo', items: '200g proteína (pollo, carne, pescado) · Carbohidrato complejo · Verduras', kcal: '~750' },
+      { name: 'Merienda', items: 'Huevos o snack proteico · Fruta', kcal: '~450' },
+      { name: 'Cena', items: '200g proteína · Verduras abundantes · Grasas saludables', kcal: '~700' },
+      { name: 'Antes de dormir', items: 'Lácteo sin azúcar · Frutos secos', kcal: '~300' },
+    ]
+  },
+  0: { // Domingo
+    day: 'DOMINGO',
+    meals: [
+      { name: 'Desayuno', items: 'Huevos revueltos · Pan integral · Frutos secos · Café sin azúcar', kcal: '~700' },
+      { name: 'Almuerzo', items: '200g proteína · Carbohidrato complejo · Ensalada con aceite de oliva', kcal: '~750' },
+      { name: 'Merienda', items: 'Huevos hervidos · Pan · Fruta', kcal: '~450' },
+      { name: 'Cena', items: '200g proteína · Verduras · Grasas saludables', kcal: '~700' },
+      { name: 'Antes de dormir', items: 'Yogur o queso cottage · Frutos secos', kcal: '~300' },
+    ]
+  },
+};
+
+let dietLog = {};
+
+function loadDietLog() {
+  const saved = localStorage.getItem('gym_diet_log_v1');
+  if (saved) {
+    try { dietLog = JSON.parse(saved); }
+    catch (e) { dietLog = {}; }
+  }
+}
+
+function saveDietLog() {
+  localStorage.setItem('gym_diet_log_v1', JSON.stringify(dietLog));
+}
+
+function getDietKey(date, mealName) {
+  return `${date}__${mealName}`;
+}
+
+function toggleMeal(date, mealName) {
+  const key = getDietKey(date, mealName);
+  dietLog[key] = !dietLog[key];
+  saveDietLog();
+  renderDiet();
+}
+
+function renderDiet() {
+  const page = document.getElementById('page-diet');
+  const dow = getDayOfWeek();
+  const todayPlan = DIET_PLAN[dow];
+
+  if (!todayPlan) {
+    page.innerHTML = '<h2>Dieta</h2><div class="card">Error cargando plan</div>';
+    return;
+  }
+
+  const todayDate = today();
+  const mealsList = todayPlan.meals.map(meal => {
+    const key = getDietKey(todayDate, meal.name);
+    const done = dietLog[key] || false;
+    return `
+      <div style="padding:14px;background:var(--surface2);border-radius:12px;margin-bottom:10px;cursor:pointer" onclick="toggleMeal('${todayDate}', '${meal.name.replace(/'/g, "\\'")}')">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div style="font-size:20px">${done ? '✅' : '⭕'}</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;color:${done ? 'var(--success)' : 'var(--text)'}">${meal.name}</div>
+            <div style="font-size:12px;color:var(--accent-l)">${meal.kcal}</div>
+          </div>
+        </div>
+        <div style="font-size:13px;color:var(--muted);margin-left:30px">${meal.items}</div>
+      </div>
+    `;
+  }).join('');
+
+  const completed = todayPlan.meals.filter(m => dietLog[getDietKey(todayDate, m.name)]).length;
+  const total = todayPlan.meals.length;
+
+  page.innerHTML = `
+    <h2>${todayPlan.day}</h2>
+
+    <div class="card">
+      <div style="text-align:center;padding:10px 0">
+        <div style="font-size:32px;font-weight:800;color:var(--accent-l)">${completed}/${total}</div>
+        <div style="color:var(--muted);margin-top:4px">comidas completadas</div>
+        <div class="prog-wrap" style="margin-top:10px">
+          <div class="prog-bar"><div class="prog-fill" style="width:${(completed/total)*100}%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Plan del día</div>
+      ${mealsList}
+      <div style="font-size:13px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+        💡 Clickea en cada comida para marcarla como completada
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Resumen nutricional</div>
+      <table style="width:100%;font-size:14px">
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px 0"><strong>Total calorías:</strong></td>
+          <td style="text-align:right;color:var(--accent-l);font-weight:700">~3.150 kcal</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px 0"><strong>Proteína estimada:</strong></td>
+          <td style="text-align:right;color:var(--accent-l);font-weight:700">~190-200g</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px 0"><strong>Carbohidratos:</strong></td>
+          <td style="text-align:right;color:var(--accent-l);font-weight:700">Complejos (batata, integral)</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0"><strong>Grasas:</strong></td>
+          <td style="text-align:right;color:var(--accent-l);font-weight:700">Saludables (huevo, frutos secos)</td>
+        </tr>
+      </table>
+    </div>
+  `;
 }
 
 // ─── PESO & MEDIDAS ───────────────────────────
