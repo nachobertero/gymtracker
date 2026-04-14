@@ -1297,10 +1297,18 @@ function renderDiet() {
     const total = plan.meals.length;
 
     const mealsList = plan.meals.map(meal => {
-      const key = getDietKey(today_str, meal.name);
-      const done = dietLog[key] || false;
+      let done = false;
+      let clickable = false;
+
+      // Solo se puede marcar si es HOY
+      if (isToday) {
+        const key = getDietKey(today_str, meal.name);
+        done = dietLog[key] || false;
+        clickable = true;
+      }
+
       return `
-        <div style="padding:10px;background:var(--surface2);border-radius:8px;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;gap:8px" onclick="toggleMeal('${today_str}', '${meal.name.replace(/'/g, "\\'")}')">
+        <div style="padding:10px;background:var(--surface2);border-radius:8px;margin-bottom:6px;${clickable ? 'cursor:pointer' : 'cursor:default;opacity:0.7'};display:flex;align-items:center;gap:8px" ${clickable ? `onclick="toggleMeal('${today_str}', '${meal.name.replace(/'/g, "\\'")}')"` : ''}>
           <div style="font-size:16px">${done ? '✅' : '⭕'}</div>
           <div style="flex:1;min-width:0">
             <div style="font-weight:600;font-size:13px;color:${done ? 'var(--success)' : 'var(--text)'}">${meal.name}</div>
