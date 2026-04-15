@@ -443,6 +443,7 @@ async function syncWorkoutToSupabase(workout) {
       date: workout.date,
       day_of_week: workout.day_of_week,
       exercises: workout.exercises,
+      muscle_groups: workout.muscleGroups || [],
       notes: workout.notes || null,
       updated_at: new Date().toISOString()
     });
@@ -918,7 +919,7 @@ function renderHist() {
       <div class="hist-item" onclick="toggleDetail(${i})">
         <div class="hist-date">${formatDate(w.date)} · ${['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][w.day_of_week] || ''}</div>
         <div class="hist-muscles">
-          ${w.muscleGroups.map(g => `<span class="hist-tag">${g}</span>`).join('')}
+          ${(w.muscleGroups || []).map(g => `<span class="hist-tag">${g}</span>`).join('')}
         </div>
         <div class="hist-exlist">${w.exercises.map(e => e.name).join(' · ')}</div>
         <div class="hist-stats">
@@ -1822,7 +1823,8 @@ async function syncFromSupabase() {
       id: w.id,
       date: w.date,
       day_of_week: w.day_of_week,
-      exercises: w.exercises,
+      exercises: w.exercises || [],
+      muscleGroups: w.muscle_groups || [],
       notes: w.notes
     }));
   }
