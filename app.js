@@ -957,11 +957,16 @@ function toggleDetail(i) {
   if (d) d.classList.toggle('open');
 }
 
-function deleteWorkout(id, e) {
+async function deleteWorkout(id, e) {
   e.stopPropagation();
   if (!confirm('¿Eliminar este entrenamiento?')) return;
   workouts = workouts.filter(w => w.id !== id);
   saveData();
+  if (currentUser) {
+    const { error } = await supabase.from('workouts').delete().eq('id', id).eq('user_id', currentUser.id);
+    if (error) console.error('Error eliminando de Supabase:', error);
+    else console.log('🗑️ Workout eliminado de Supabase:', id);
+  }
   renderHist();
   toast('Eliminado');
 }
