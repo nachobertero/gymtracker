@@ -1310,14 +1310,15 @@ function toggleRDay(id) {
 
 // ─── PLAN DE DIETA ────────────────────────────
 const DIET_PLAN = {
-  1: { // Lunes
-    day: 'LUNES',
+  1: { // Lunes (con fútbol)
+    day: 'LUNES 🏃 +fútbol',
     meals: [
-      { name: 'Desayuno', items: '5-6 huevos revueltos · 2 rodajas pan integral · 30g nueces · Café sin azúcar', kcal: '~700' },
-      { name: 'Almuerzo', items: '200g pechuga o milanesas · Batata o arroz integral · Ensalada con aceite de oliva', kcal: '~750' },
-      { name: 'Merienda (post-gym)', items: '3-4 huevos hervidos · Pan integral con queso crema · 1 fruta', kcal: '~450' },
-      { name: 'Cena', items: '200g pollo · Verduras salteadas (brócoli, espinaca, zapallo) · Sin fideos', kcal: '~700' },
-      { name: 'Antes de dormir', items: '200g yogur griego sin azúcar · 30g frutos secos', kcal: '~300' },
+      { name: 'Desayuno', items: '6 huevos revueltos · 3 tostadas pan integral · 40g nueces · Café sin azúcar', kcal: '~850' },
+      { name: 'Almuerzo', items: '250g pechuga o milanesas · Batata grande o arroz integral · Ensalada con aceite de oliva', kcal: '~850' },
+      { name: 'Merienda (post-gym)', items: '4-5 huevos hervidos · Pan integral con queso crema · 1 fruta + banana', kcal: '~550' },
+      { name: 'Post-fútbol (crucial)', items: '1 licuado: 50g proteína whey + 1 banana + 30g avena + leche · O barrita proteica + fruta', kcal: '~400' },
+      { name: 'Cena', items: '200g pollo · Verduras salteadas (brócoli, espinaca, zapallo) · Aceite de oliva', kcal: '~700' },
+      { name: 'Antes de dormir', items: '200g yogur griego sin azúcar · 40g frutos secos', kcal: '~350' },
     ]
   },
   2: { // Martes
@@ -1330,14 +1331,15 @@ const DIET_PLAN = {
       { name: 'Antes de dormir', items: 'Yogur griego sin azúcar · Nueces y almendras', kcal: '~300' },
     ]
   },
-  3: { // Miércoles
-    day: 'MIÉRCOLES',
+  3: { // Miércoles (con fútbol)
+    day: 'MIÉRCOLES 🏃 +fútbol',
     meals: [
-      { name: 'Desayuno', items: '5 huevos revueltos · 2 tostadas integrales · Frutos secos · Té sin azúcar', kcal: '~700' },
-      { name: 'Almuerzo', items: '200g pechuga a la plancha · Quinoa o arroz integral · Ensalada colorida', kcal: '~750' },
-      { name: 'Merienda (post-gym)', items: '3-4 huevos hervidos · Pan integral · Manzana', kcal: '~450' },
+      { name: 'Desayuno', items: '6 huevos revueltos · 3 tostadas integrales · Frutos secos · Té sin azúcar', kcal: '~850' },
+      { name: 'Almuerzo', items: '250g pechuga a la plancha · Quinoa o arroz integral · Ensalada colorida con aguacate', kcal: '~850' },
+      { name: 'Merienda (post-gym)', items: '4-5 huevos hervidos · Pan integral · Manzana + banana', kcal: '~550' },
+      { name: 'Post-fútbol (crucial)', items: '1 licuado: 50g proteína whey + 1 banana + 30g avena + leche · O barrita proteica + fruta', kcal: '~400' },
       { name: 'Cena', items: '200g pollo · Calabacín salteado · Ajo y cebolla · Aceite de oliva', kcal: '~700' },
-      { name: 'Antes de dormir', items: 'Queso cottage · Almendras tostadas', kcal: '~300' },
+      { name: 'Antes de dormir', items: 'Queso cottage · Almendras tostadas', kcal: '~350' },
     ]
   },
   4: { // Jueves
@@ -1350,14 +1352,15 @@ const DIET_PLAN = {
       { name: 'Antes de dormir', items: 'Yogur griego sin azúcar · 40g frutos secos (más que otros días)', kcal: '~350' },
     ]
   },
-  5: { // Viernes
-    day: 'VIERNES',
+  5: { // Viernes (con 5k)
+    day: 'VIERNES 🏃 +5k',
     meals: [
-      { name: 'Desayuno', items: '5 huevos revueltos · Pan integral tostado · Almendras · Café con CCL', kcal: '~700' },
-      { name: 'Almuerzo', items: '200g pechuga a la plancha · Arroz integral o batata · Ensalada verde', kcal: '~750' },
-      { name: 'Merienda (post-gym)', items: '4 huevos hervidos · Queso fresco · 1 fruta', kcal: '~450' },
+      { name: 'Desayuno', items: '5 huevos revueltos · Pan integral tostado · Almendras · Café con CCL', kcal: '~750' },
+      { name: 'Almuerzo', items: '250g pechuga a la plancha · Arroz integral o batata grande · Ensalada verde', kcal: '~800' },
+      { name: 'Merienda (post-gym)', items: '4 huevos hervidos · Queso fresco · 1 fruta + banana', kcal: '~500' },
+      { name: 'Post-5k (crucial)', items: '1 licuado: 30g proteína whey + banana + avena · O bebida isotónica + fruta', kcal: '~300' },
       { name: 'Cena', items: '200g carne vacuna · Verduras salteadas · Aceite de oliva', kcal: '~700' },
-      { name: 'Antes de dormir', items: 'Yogur griego sin azúcar · Frutos secos variados', kcal: '~300' },
+      { name: 'Antes de dormir', items: 'Yogur griego sin azúcar · Frutos secos variados', kcal: '~350' },
     ]
   },
   6: { // Sábado
