@@ -845,9 +845,6 @@ function removeExercise(ei) {
 }
 
 function saveWorkout() {
-  if (!logState.exercises.length) {
-    toast('Agregá al menos un ejercicio', 'error'); return;
-  }
   const workout = {
     id: uid(),
     date: logState.date,
