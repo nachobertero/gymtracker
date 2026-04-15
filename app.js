@@ -1878,6 +1878,18 @@ async function syncFromSupabase() {
 }
 
 async function manualSync() {
+  console.log('🔄 manualSync llamado, currentUser:', currentUser?.email ?? 'null');
+  if (!currentUser) {
+    // Try to recover session
+    const { data: { session } } = await supabase.auth.getSession();
+    console.log('🔑 Session recovery:', session?.user?.email ?? 'no session');
+    if (session?.user) {
+      currentUser = session.user;
+    } else {
+      toast('No hay sesión activa. Iniciá sesión primero.', 'error');
+      return;
+    }
+  }
   toast('🔄 Sincronizando...');
   await syncFromSupabase();
   toast('✅ Datos actualizados');
@@ -1953,22 +1965,20 @@ function setupRealtimeListeners() {
 
 // ─── INIT ─────────────────────────────────────
 async function initApp() {
-  // Hide auth modal by default
   document.getElementById('auth-modal').style.display = 'none';
-
-  // Load local data first
   loadData();
+  renderDash();
 
   try {
-    // Check if user session exists
-    const { data: { user }, error } = await supabase.auth.getUser();
+    // getSession is more reliable than getUser for persistence
+    const { data: { session }, error } = await supabase.auth.getSession();
+    console.log('🔑 initApp session:', session?.user?.email ?? 'no session', error?.message ?? '');
 
-    if (user && !error) {
-      currentUser = user;
-      console.log('✅ Sesión activa:', user.email);
+    if (session?.user) {
+      currentUser = session.user;
+      console.log('✅ Sesión activa:', currentUser.email);
       await syncFromSupabase();
     } else {
-      // No active session
       currentUser = null;
       document.getElementById('auth-modal').style.display = 'flex';
     }
@@ -1977,8 +1987,6 @@ async function initApp() {
     currentUser = null;
     document.getElementById('auth-modal').style.display = 'flex';
   }
-
-  renderDash();
 }
 
 initApp();
