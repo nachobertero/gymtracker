@@ -551,14 +551,25 @@ function renderDash() {
 
   // Métricas híbridas
   const SESSIONS_GOAL = 120; // 5 días × 24 semanas
-  const semanasCompletadas = getProgressWeeks();           // semanas 100% terminadas (0 durante sem 1)
-  const semanaActual = Math.min(semanasCompletadas + 1, GOAL_WEEKS); // semana en curso (1 ahora)
+  const semanasCompletadas = getProgressWeeks();
+  const semanaActual = Math.min(semanasCompletadas + 1, GOAL_WEEKS);
   const pesoActual = weights.length > 0 ? weights[weights.length - 1].weight : null;
   const diasEntrenados = new Set(workouts.map(w => w.date)).size;
-  // Efectividad solo sobre semanas ya cerradas (no la actual, que aún no terminó)
   const diasEsperados = semanasCompletadas * 5;
   const efectividad = diasEsperados > 0 ? Math.min(100, Math.round((diasEntrenados / diasEsperados) * 100)) : 100;
   const progPct = Math.round((semanasCompletadas / GOAL_WEEKS) * 100);
+
+  // Calorías recomendadas por día
+  const calsBase = 3200;
+  let calsHoy = calsBase;
+  let motivoExtra = '';
+  if (dow === 1 || dow === 3) { // Lunes o Miércoles = fútbol
+    calsHoy = 3600;
+    motivoExtra = '+ 400 kcal por fútbol';
+  } else if (dow === 5) { // Viernes = 5k
+    calsHoy = 3400;
+    motivoExtra = '+ 200 kcal por 5k';
+  }
 
   const days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
   const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
@@ -665,6 +676,25 @@ function renderDash() {
     </div>
 
     ${todayHTML}
+
+    <div class="card" style="background:linear-gradient(135deg,#0f3a1f 0%,#1a5a2f 100%);border-left:4px solid var(--success)">
+      <div class="card-title"><span class="dot" style="background:var(--success)"></span>Nutrición de hoy</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="text-align:center">
+          <div style="font-size:32px;font-weight:900;color:var(--success)">${calsHoy}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">kcal recomendadas</div>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:center">
+          <div style="font-size:13px;color:var(--text);line-height:1.6">
+            <strong>Base:</strong> 3200 kcal<br>
+            ${motivoExtra ? `<strong>Extra:</strong> ${motivoExtra}` : '<span style="color:var(--muted)">Día normal</span>'}
+          </div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1)">
+        💡 Mantén este superávit calórico para crecer. Sin él, no hay ganancia de músculo.
+      </div>
+    </div>
 
     <div class="quote-card">
       <div class="quote-text">"${quote}"</div>
