@@ -1870,13 +1870,7 @@ async function syncFromSupabase() {
   saveDietLog();
 
   // Re-render current page with fresh data
-  const activePage = document.querySelector('.page.active')?.id;
-  if (activePage === 'page-dash') renderDash();
-  else if (activePage === 'page-hist') renderHist();
-  else if (activePage === 'page-anal') renderAnal();
-  else if (activePage === 'page-weight') renderWeight();
-  else if (activePage === 'page-diet') renderDiet();
-  else renderDash();
+  reRenderCurrentPage();
 
   // Set up real-time listeners
   setupRealtimeListeners();
@@ -1901,31 +1895,44 @@ async function manualSync() {
   renderDash();
 }
 
+function reRenderCurrentPage() {
+  const p = document.querySelector('.page.active')?.id;
+  if (p === 'page-dash') renderDash();
+  else if (p === 'page-hist') renderHist();
+  else if (p === 'page-anal') renderAnal();
+  else if (p === 'page-weight') renderWeight();
+  else if (p === 'page-diet') renderDiet();
+}
+
 function setupRealtimeListeners() {
   if (!currentUser) return;
 
   // Listen to workout changes
   supabase
     .channel('workouts_channel')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'workouts', filter: `user_id=eq.${currentUser.id}` }, (payload) => {
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'workouts', filter: `user_id=eq.${currentUser.id}` }, async (payload) => {
+      console.log('📡 Realtime workout:', payload.eventType, payload.new?.id || payload.old?.id);
       if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
         const w = payload.new;
         const idx = workouts.findIndex(wo => wo.id === w.id);
-        if (idx >= 0) {
-          workouts[idx] = { id: w.id, date: w.date, day_of_week: w.day_of_week, exercises: w.exercises, notes: w.notes };
-        } else {
-          workouts.push({ id: w.id, date: w.date, day_of_week: w.day_of_week, exercises: w.exercises, notes: w.notes });
-        }
+        const mapped = { id: w.id, date: w.date, day_of_week: w.day_of_week, exercises: w.exercises || [], muscleGroups: w.muscle_groups || [], notes: w.notes };
+        if (idx >= 0) workouts[idx] = mapped;
+        else workouts.unshift(mapped);
         workouts.sort((a, b) => b.date.localeCompare(a.date));
-        saveData();
-        if (document.querySelector('.page.active')?.id === 'page-dash') renderDash();
-        if (document.querySelector('.page.active')?.id === 'page-hist') renderHist();
-        if (document.querySelector('.page.active')?.id === 'page-anal') renderAnal();
       } else if (payload.eventType === 'DELETE') {
-        workouts = workouts.filter(w => w.id !== payload.old.id);
-        saveData();
-        if (document.querySelector('.page.active')?.id === 'page-dash') renderDash();
+        const deletedId = payload.old?.id;
+        console.log('🗑️ Realtime DELETE id:', deletedId);
+        if (deletedId) {
+          workouts = workouts.filter(w => w.id !== deletedId);
+        } else {
+          // Si payload.old está vacío, hacer full sync
+          console.log('⚠️ payload.old vacío, haciendo full sync...');
+          await syncFromSupabase();
+          return;
+        }
       }
+      saveData();
+      reRenderCurrentPage();
     })
     .subscribe();
 
