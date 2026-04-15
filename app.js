@@ -501,8 +501,12 @@ function getWeekVolume() {
 
 function getProgressWeeks() {
   const start = new Date(START_DATE + 'T00:00:00');
-  const now = new Date();
-  const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24 * 7));
+  // Usar la fecha más reciente entre hoy y el último workout registrado
+  const latestWorkout = workouts.length > 0
+    ? new Date(workouts.reduce((a, b) => a.date > b.date ? a : b).date + 'T00:00:00')
+    : null;
+  const reference = latestWorkout && latestWorkout > new Date() ? latestWorkout : new Date();
+  const diff = Math.floor((reference - start) / (1000 * 60 * 60 * 24 * 7));
   return Math.min(Math.max(diff, 0), GOAL_WEEKS);
 }
 
