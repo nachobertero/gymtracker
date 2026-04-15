@@ -1817,22 +1817,7 @@ async function syncFromSupabase() {
   if (!currentUser) { console.log('❌ syncFromSupabase: no user'); return; }
   console.log('🔄 Sincronizando desde Supabase para:', currentUser.email);
 
-  // PASO 1: Subir todos los workouts locales que no están en Supabase
-  const localWorkouts = JSON.parse(localStorage.getItem('gym_workouts_v2') || '[]');
-  const { data: existingInCloud } = await supabase
-    .from('workouts')
-    .select('id')
-    .eq('user_id', currentUser.id);
-
-  const cloudIds = new Set((existingInCloud || []).map(w => w.id));
-  const toUpload = localWorkouts.filter(w => !cloudIds.has(w.id));
-  console.log('⬆️ Workouts locales a subir:', toUpload.length);
-
-  for (const wo of toUpload) {
-    await syncWorkoutToSupabase(wo);
-  }
-
-  // PASO 2: Bajar TODO de Supabase (ya tiene los nuevos)
+  // Bajar TODO de Supabase — es la fuente de verdad
   const { data: woData, error: woError } = await supabase
     .from('workouts')
     .select('*')
