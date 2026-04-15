@@ -632,7 +632,7 @@ function renderDash() {
           <div style="font-size:13px;color:var(--success);margin-bottom:8px">✅ Sincronizado en la nube (${currentUser.email})</div>
           <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Tus datos están en Supabase. Se actualizan automáticamente en todos tus dispositivos.</div>
           <div class="row">
-            <button class="btn btn-secondary btn-sm" onclick="syncFromSupabase();toast('🔄 Sincronizando...')">🔄 Sincronizar ahora</button>
+            <button class="btn btn-secondary btn-sm" onclick="manualSync()">🔄 Sincronizar ahora</button>
             <button class="btn btn-danger btn-sm" onclick="authLogout()">🚪 Cerrar sesión</button>
           </div>
         </div>
@@ -916,7 +916,7 @@ function renderHist() {
     const totalSets = w.exercises.reduce((s, ex) => s + ex.sets.length, 0);
     return `
       <div class="hist-item" onclick="toggleDetail(${i})">
-        <div class="hist-date">${formatDate(w.date)} · ${w.dayOfWeek}</div>
+        <div class="hist-date">${formatDate(w.date)} · ${['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][w.day_of_week] || ''}</div>
         <div class="hist-muscles">
           ${w.muscleGroups.map(g => `<span class="hist-tag">${g}</span>`).join('')}
         </div>
@@ -1861,8 +1861,24 @@ async function syncFromSupabase() {
   saveData();
   saveDietLog();
 
+  // Re-render current page with fresh data
+  const activePage = document.querySelector('.page.active')?.id;
+  if (activePage === 'page-dash') renderDash();
+  else if (activePage === 'page-hist') renderHist();
+  else if (activePage === 'page-anal') renderAnal();
+  else if (activePage === 'page-weight') renderWeight();
+  else if (activePage === 'page-diet') renderDiet();
+  else renderDash();
+
   // Set up real-time listeners
   setupRealtimeListeners();
+}
+
+async function manualSync() {
+  toast('🔄 Sincronizando...');
+  await syncFromSupabase();
+  toast('✅ Datos actualizados');
+  renderDash();
 }
 
 function setupRealtimeListeners() {
