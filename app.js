@@ -445,8 +445,11 @@ async function syncWorkoutToSupabase(workout) {
       exercises: workout.exercises,
       notes: workout.notes || null,
       updated_at: new Date().toISOString()
-    }, { onConflict: 'id' });
-  if (error) console.error('Error syncing workout:', error);
+    });
+  if (error) {
+    console.error('Error syncing workout:', error);
+    toast('Error sincronizando entrenamiento', 'error');
+  }
 }
 
 // ─── HELPERS ──────────────────────────────────
@@ -1338,8 +1341,11 @@ async function syncMealToSupabase(date, mealName, completed) {
       meal_name: mealName,
       completed: completed,
       updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id,date,meal_name' });
-  if (error) console.error('Error syncing meal:', error);
+    });
+  if (error) {
+    console.error('Error syncing meal:', error);
+    toast('Error sincronizando comida', 'error');
+  }
 }
 
 function renderDiet() {
@@ -1543,8 +1549,11 @@ async function syncWeightToSupabase(date, weight) {
       user_id: currentUser.id,
       date: date,
       weight: weight
-    }, { onConflict: 'user_id,date' });
-  if (error) console.error('Error syncing weight:', error);
+    });
+  if (error) {
+    console.error('Error syncing weight:', error);
+    toast('Error sincronizando peso', 'error');
+  }
 }
 
 async function deleteWeight(date) {
@@ -1758,7 +1767,7 @@ async function syncToSupabase() {
         exercises: wo.exercises,
         notes: wo.notes || null,
         updated_at: new Date().toISOString()
-      }, { onConflict: 'id' });
+      });
     if (error) console.error('Error syncing workout:', error);
   }
 
@@ -1770,7 +1779,7 @@ async function syncToSupabase() {
         user_id: currentUser.id,
         date: w.date,
         weight: w.weight
-      }, { onConflict: 'user_id,date' });
+      });
     if (error) console.error('Error syncing weight:', error);
   }
 
@@ -1785,7 +1794,7 @@ async function syncToSupabase() {
         meal_name: mealName,
         completed: value === true,
         updated_at: new Date().toISOString()
-      }, { onConflict: 'user_id,date,meal_name' });
+      });
     if (error) console.error('Error syncing diet:', error);
   }
 
