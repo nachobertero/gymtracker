@@ -1807,16 +1807,18 @@ async function syncToSupabase() {
 }
 
 async function syncFromSupabase() {
-  if (!currentUser) return;
+  if (!currentUser) { console.log('❌ syncFromSupabase: no user'); return; }
+  console.log('🔄 Sincronizando desde Supabase para:', currentUser.email);
 
   // Load workouts from Supabase
-  const { data: woData } = await supabase
+  const { data: woData, error: woError } = await supabase
     .from('workouts')
     .select('*')
     .eq('user_id', currentUser.id)
     .order('date', { ascending: false });
 
-  // Replace local workouts with cloud version
+  console.log('📦 Workouts en Supabase:', woData?.length ?? 0, woError ? '❌ Error:' + woError.message : '');
+
   workouts = [];
   if (woData && woData.length > 0) {
     workouts = woData.map(w => ({
@@ -1830,28 +1832,27 @@ async function syncFromSupabase() {
   }
 
   // Load weights from Supabase
-  const { data: wData } = await supabase
+  const { data: wData, error: wError } = await supabase
     .from('weight_tracking')
     .select('*')
     .eq('user_id', currentUser.id)
     .order('date', { ascending: true });
 
-  // Replace local weights with cloud version
+  console.log('⚖️ Pesos en Supabase:', wData?.length ?? 0, wError ? '❌ Error:' + wError.message : '');
+
   weights = [];
   if (wData && wData.length > 0) {
-    weights = wData.map(w => ({
-      date: w.date,
-      weight: w.weight
-    }));
+    weights = wData.map(w => ({ date: w.date, weight: w.weight }));
   }
 
   // Load diet from Supabase
-  const { data: dData } = await supabase
+  const { data: dData, error: dError } = await supabase
     .from('diet_log')
     .select('*')
     .eq('user_id', currentUser.id);
 
-  // Replace local diet with cloud version
+  console.log('🍽️ Dieta en Supabase:', dData?.length ?? 0, dError ? '❌ Error:' + dError.message : '');
+
   dietLog = {};
   if (dData && dData.length > 0) {
     dData.forEach(d => {
