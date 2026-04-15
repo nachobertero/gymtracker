@@ -1,10 +1,19 @@
 // ─────────────────────────────────────────────
 //  GYM TRACKER — Nacho
-//  Datos, rutina y lógica completa
+//  Datos, rutina y lógica completa + Supabase Sync
 // ─────────────────────────────────────────────
 
 const START_DATE = '2026-04-14'; // Día de inicio del programa
 const GOAL_WEEKS = 24;
+
+// ─── SUPABASE CONFIG ──────────────────────────
+const SUPABASE_URL = 'https://gxgloymgyodabqzvlahk.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_EnJuu59aFS1hUdxdKLhtzQ_Dsti2aXV';
+const { createClient } = window.supabase;
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+let isOnline = true;
 
 // ─── BASE DE EJERCICIOS ───────────────────────
 const EXERCISE_DB = {
@@ -417,6 +426,27 @@ function loadData() {
 function saveData() {
   localStorage.setItem('gym_workouts_v2', JSON.stringify(workouts));
   localStorage.setItem('gym_weights_v1', JSON.stringify(weights));
+
+  // Async sync to Supabase if logged in
+  if (currentUser) {
+    syncWorkoutToSupabase(workouts[workouts.length - 1]);
+  }
+}
+
+async function syncWorkoutToSupabase(workout) {
+  if (!currentUser || !workout) return;
+  const { error } = await supabase
+    .from('workouts')
+    .upsert({
+      id: workout.id,
+      user_id: currentUser.id,
+      date: workout.date,
+      day_of_week: workout.day_of_week,
+      exercises: workout.exercises,
+      notes: workout.notes || null,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'id' });
+  if (error) console.error('Error syncing workout:', error);
 }
 
 // ─── HELPERS ──────────────────────────────────
@@ -1276,7 +1306,27 @@ function toggleMeal(date, mealName) {
   const key = getDietKey(date, mealName);
   dietLog[key] = !dietLog[key];
   saveDietLog();
+
+  // Sync to Supabase if logged in
+  if (currentUser) {
+    syncMealToSupabase(date, mealName, dietLog[key]);
+  }
+
   renderDiet();
+}
+
+async function syncMealToSupabase(date, mealName, completed) {
+  if (!currentUser) return;
+  const { error } = await supabase
+    .from('diet_log')
+    .upsert({
+      user_id: currentUser.id,
+      date: date,
+      meal_name: mealName,
+      completed: completed,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id,date,meal_name' });
+  if (error) console.error('Error syncing meal:', error);
 }
 
 function renderDiet() {
@@ -1462,8 +1512,26 @@ function saveWeight() {
   weights.sort((a, b) => a.date.localeCompare(b.date));
 
   saveData();
+
+  // Sync to Supabase if logged in
+  if (currentUser) {
+    syncWeightToSupabase(date, weight);
+  }
+
   toast('Peso guardado 💪');
   renderWeight();
+}
+
+async function syncWeightToSupabase(date, weight) {
+  if (!currentUser) return;
+  const { error } = await supabase
+    .from('weight_tracking')
+    .upsert({
+      user_id: currentUser.id,
+      date: date,
+      weight: weight
+    }, { onConflict: 'user_id,date' });
+  if (error) console.error('Error syncing weight:', error);
 }
 
 function deleteWeight(date) {
@@ -1587,6 +1655,187 @@ function importData() {
   input.click();
 }
 
+// ─── SUPABASE AUTH ────────────────────────────
+async function authLogin() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value.trim();
+
+  if (!email || !password) {
+    toast('Email y contraseña requeridos', 'error');
+    return;
+  }
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    toast(`Error: ${error.message}`, 'error');
+    return;
+  }
+
+  currentUser = data.user;
+  document.getElementById('auth-modal').style.display = 'none';
+  toast('✅ Sesión iniciada');
+  loadData();
+  await syncFromSupabase();
+  renderDash();
+}
+
+async function authSignup() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value.trim();
+
+  if (!email || !password) {
+    toast('Email y contraseña requeridos', 'error');
+    return;
+  }
+
+  if (password.length < 6) {
+    toast('Contraseña debe tener 6+ caracteres', 'error');
+    return;
+  }
+
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) {
+    toast(`Error: ${error.message}`, 'error');
+    return;
+  }
+
+  currentUser = data.user;
+  document.getElementById('auth-modal').style.display = 'none';
+  toast('✅ Cuenta creada. Datos listos para sincronizar');
+  loadData();
+  await syncToSupabase();
+  renderDash();
+}
+
+async function authLogout() {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    toast('Error cerrando sesión', 'error');
+    return;
+  }
+  currentUser = null;
+  document.getElementById('auth-modal').style.display = 'flex';
+  toast('Sesión cerrada');
+}
+
+// ─── SUPABASE SYNC ────────────────────────────
+async function syncToSupabase() {
+  if (!currentUser) return;
+
+  // Sync workouts
+  for (const wo of workouts) {
+    const { error } = await supabase
+      .from('workouts')
+      .upsert({
+        id: wo.id,
+        user_id: currentUser.id,
+        date: wo.date,
+        day_of_week: wo.day_of_week,
+        exercises: wo.exercises,
+        notes: wo.notes || null,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+    if (error) console.error('Error syncing workout:', error);
+  }
+
+  // Sync weights
+  for (const w of weights) {
+    const { error } = await supabase
+      .from('weight_tracking')
+      .upsert({
+        user_id: currentUser.id,
+        date: w.date,
+        weight: w.weight
+      }, { onConflict: 'user_id,date' });
+    if (error) console.error('Error syncing weight:', error);
+  }
+
+  // Sync diet
+  for (const [key, value] of Object.entries(dietLog)) {
+    if (!value) continue;
+    const [dateStr, mealName] = key.split('__');
+    const { error } = await supabase
+      .from('diet_log')
+      .upsert({
+        user_id: currentUser.id,
+        date: dateStr,
+        meal_name: mealName,
+        completed: true,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id,date,meal_name' });
+    if (error) console.error('Error syncing diet:', error);
+  }
+
+  toast('✅ Sincronizado con la nube');
+}
+
+async function syncFromSupabase() {
+  if (!currentUser) return;
+
+  // Load workouts
+  const { data: woData } = await supabase
+    .from('workouts')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('date', { ascending: false });
+
+  if (woData && woData.length > 0) {
+    workouts = woData.map(w => ({
+      id: w.id,
+      date: w.date,
+      day_of_week: w.day_of_week,
+      exercises: w.exercises,
+      notes: w.notes
+    }));
+  }
+
+  // Load weights
+  const { data: wData } = await supabase
+    .from('weight_tracking')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('date', { ascending: true });
+
+  if (wData && wData.length > 0) {
+    weights = wData.map(w => ({
+      date: w.date,
+      weight: w.weight
+    }));
+  }
+
+  // Load diet
+  const { data: dData } = await supabase
+    .from('diet_log')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .eq('completed', true);
+
+  dietLog = {};
+  if (dData && dData.length > 0) {
+    dData.forEach(d => {
+      const key = `${d.date}__${d.meal_name}`;
+      dietLog[key] = true;
+    });
+  }
+
+  saveData();
+  saveDietLog();
+}
+
 // ─── INIT ─────────────────────────────────────
-loadData();
-renderDash();
+async function initApp() {
+  // Check if user already logged in
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    currentUser = user;
+    document.getElementById('auth-modal').style.display = 'none';
+    loadData();
+    await syncFromSupabase();
+  } else {
+    document.getElementById('auth-modal').style.display = 'flex';
+    loadData(); // Load local data anyway
+  }
+  renderDash();
+}
+
+initApp();
