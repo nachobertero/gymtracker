@@ -628,7 +628,7 @@ function renderDash() {
         <div class="stat-lbl">🔥 Racha días</div>
       </div>
       <div class="stat">
-        <div class="stat-val">${totalW}</div>
+        <div class="stat-val">${workouts.length}</div>
         <div class="stat-lbl">Total entrenamientos</div>
       </div>
       <div class="stat">
