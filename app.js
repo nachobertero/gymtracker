@@ -647,6 +647,23 @@ function renderDash() {
       </div>
     </div>
 
+    <div style="background:linear-gradient(135deg,#1a0a3a 0%,#2d1058 50%,#1a0a3a 100%);border:1px solid rgba(124,58,237,.3);border-radius:16px;padding:18px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+        <div style="font-weight:700;font-size:15px">Progreso hacia la meta</div>
+        <div style="font-size:22px;font-weight:900;color:var(--accent-l)">${progPct}%</div>
+      </div>
+      <div class="prog-bar" style="height:10px;border-radius:10px">
+        <div class="prog-fill" style="width:${progPct}%;border-radius:10px"></div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px;text-align:center">
+        ${semanasCompletadas === 0 ? 'Semana 1 en curso — el camino empieza hoy 💪' :
+          semanasCompletadas < 8 ? `Fase 1 completada ${semanasCompletadas < 4 ? 'parcialmente' : '✅'} — seguís en re-activación` :
+          semanasCompletadas < 12 ? 'En plena Fase 2 — volumen y cargas aumentando 🔥' :
+          semanasCompletadas < 24 ? 'Fase 3 — intensificación, pico de forma ⚡' :
+          '¡Meta alcanzada! Bestia desbloqueada 🏆'}
+      </div>
+    </div>
+
     ${todayHTML}
 
     <div class="quote-card">
