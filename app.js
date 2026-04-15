@@ -827,7 +827,7 @@ function saveWorkout() {
   const workout = {
     id: uid(),
     date: logState.date,
-    dayOfWeek: ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][new Date(logState.date + 'T00:00:00').getDay()],
+    day_of_week: new Date(logState.date + 'T00:00:00').getDay(),
     muscleGroups: [...logState.muscleGroups],
     exercises: logState.exercises.map(ex => ({
       name: ex.name,
