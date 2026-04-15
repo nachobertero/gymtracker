@@ -426,11 +426,12 @@ function loadData() {
 function saveData() {
   localStorage.setItem('gym_workouts_v2', JSON.stringify(workouts));
   localStorage.setItem('gym_weights_v1', JSON.stringify(weights));
+}
 
-  // Async sync to Supabase if logged in
-  if (currentUser) {
-    syncWorkoutToSupabase(workouts[workouts.length - 1]);
-  }
+// Lllamr explícitamente después de guardar un workout nuevo
+async function saveAndSyncWorkout(workout) {
+  if (!currentUser) return;
+  await syncWorkoutToSupabase(workout);
 }
 
 async function syncWorkoutToSupabase(workout) {
@@ -842,6 +843,7 @@ function saveWorkout() {
   };
   workouts.unshift(workout);
   saveData();
+  saveAndSyncWorkout(workout); // Sync este workout específico a Supabase
   toast('Entrenamiento guardado 💪');
   logState = { date: today(), muscleGroups: [], exercises: [], notes: '' };
   setTimeout(() => navigate('hist'), 500);
@@ -1819,17 +1821,28 @@ async function syncFromSupabase() {
 
   console.log('📦 Workouts en Supabase:', woData?.length ?? 0, woError ? '❌ Error:' + woError.message : '');
 
-  workouts = [];
-  if (woData && woData.length > 0) {
-    workouts = woData.map(w => ({
-      id: w.id,
-      date: w.date,
-      day_of_week: w.day_of_week,
-      exercises: w.exercises || [],
-      muscleGroups: w.muscle_groups || [],
-      notes: w.notes
-    }));
+  // Merge: cloud data + local workouts not yet in cloud
+  const cloudIds = new Set((woData || []).map(w => w.id));
+  const localOnlyWorkouts = workouts.filter(w => !cloudIds.has(w.id));
+
+  // Upload local-only workouts to Supabase
+  for (const wo of localOnlyWorkouts) {
+    console.log('⬆️ Subiendo workout local a nube:', wo.id, wo.date);
+    await syncWorkoutToSupabase(wo);
   }
+
+  // Now build combined list: cloud + local-only
+  const cloudWorkouts = (woData || []).map(w => ({
+    id: w.id,
+    date: w.date,
+    day_of_week: w.day_of_week,
+    exercises: w.exercises || [],
+    muscleGroups: w.muscle_groups || [],
+    notes: w.notes
+  }));
+
+  workouts = [...cloudWorkouts, ...localOnlyWorkouts]
+    .sort((a, b) => b.date.localeCompare(a.date));
 
   // Load weights from Supabase
   const { data: wData, error: wError } = await supabase
