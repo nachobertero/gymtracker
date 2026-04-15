@@ -1490,19 +1490,25 @@ function renderDiet() {
     `;
   }).join('');
 
+  const todayPlan = DIET_PLAN[dow];
+  const totalKcalHoy = todayPlan.meals.reduce((sum, m) => {
+    const kcal = parseInt(m.kcal.replace('~', ''));
+    return sum + kcal;
+  }, 0);
+
   page.innerHTML = `
     <h2>📋 Dieta Semanal</h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:16px">
       ${dayCards}
     </div>
     <div class="card" style="margin-top:16px;background:var(--surface2);border-left:4px solid var(--accent)">
-      <div class="card-title"><span class="dot"></span>💡 Cómo funciona</div>
+      <div class="card-title"><span class="dot"></span>💡 Hoy: ${totalKcalHoy} kcal</div>
       <div style="font-size:13px;color:var(--text);line-height:1.6">
         ✓ Ves los 7 días de la semana en el grid<br>
         ✓ Clickea en cada comida para marcarla completada<br>
         ✓ La estrella ⭐ marca el día de hoy<br>
         ✓ El tracking se guarda automáticamente<br>
-        <strong>Total diario: ~3.150 kcal • 190-200g proteína</strong>
+        <strong>Proteína diaria: 190-200g</strong>
       </div>
     </div>
   `;
