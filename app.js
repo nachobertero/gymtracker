@@ -712,8 +712,8 @@ function renderLog() {
 
     <div class="card">
       <div class="form-group">
-        <label>Fecha</label>
-        <input type="date" id="log-date" value="${logState.date}" onchange="logState.date=this.value">
+        <label>Fecha <span style="color:var(--muted);font-weight:400;font-size:12px">— podés cambiarla para registrar días anteriores</span></label>
+        <input type="date" id="log-date" value="${logState.date}" onchange="logState.date=this.value" max="${today()}">
       </div>
       <div class="form-group">
         <label>Grupos musculares</label>
