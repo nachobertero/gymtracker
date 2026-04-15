@@ -1921,17 +1921,31 @@ function setupRealtimeListeners() {
 
 // ─── INIT ─────────────────────────────────────
 async function initApp() {
-  // Check if user already logged in
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) {
-    currentUser = user;
-    document.getElementById('auth-modal').style.display = 'none';
-    loadData();
-    await syncFromSupabase();
-  } else {
+  // Hide auth modal by default
+  document.getElementById('auth-modal').style.display = 'none';
+
+  // Load local data first
+  loadData();
+
+  try {
+    // Check if user session exists
+    const { data: { user }, error } = await supabase.auth.getUser();
+
+    if (user && !error) {
+      currentUser = user;
+      console.log('✅ Sesión activa:', user.email);
+      await syncFromSupabase();
+    } else {
+      // No active session
+      currentUser = null;
+      document.getElementById('auth-modal').style.display = 'flex';
+    }
+  } catch (err) {
+    console.error('Error checking auth:', err);
+    currentUser = null;
     document.getElementById('auth-modal').style.display = 'flex';
-    loadData(); // Load local data anyway
   }
+
   renderDash();
 }
 
