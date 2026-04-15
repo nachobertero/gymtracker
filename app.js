@@ -549,10 +549,13 @@ function renderDash() {
 
   // Métricas híbridas
   const SESSIONS_GOAL = 120; // 5 días × 24 semanas
-  const diasEntrenados = new Set(workouts.map(w => w.date)).size; // días únicos entrenados
-  const diasEsperadosHoy = Math.min(progWeeks * 5, SESSIONS_GOAL); // días que deberías tener hasta hoy
-  const efectividad = diasEsperadosHoy > 0 ? Math.min(100, Math.round((diasEntrenados / diasEsperadosHoy) * 100)) : 0;
-  const progPct = Math.round((progWeeks / GOAL_WEEKS) * 100);
+  const semanasCompletadas = getProgressWeeks();           // semanas 100% terminadas
+  const semanaActual = Math.min(semanasCompletadas + 1, GOAL_WEEKS); // semana en curso
+  const diasEntrenados = new Set(workouts.map(w => w.date)).size;
+  // Efectividad solo sobre semanas ya cerradas (no la actual, que aún no terminó)
+  const diasEsperados = semanasCompletadas * 5;
+  const efectividad = diasEsperados > 0 ? Math.min(100, Math.round((diasEntrenados / diasEsperados) * 100)) : 100;
+  const progPct = Math.round((semanasCompletadas / GOAL_WEEKS) * 100);
 
   const days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
   const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
@@ -600,7 +603,7 @@ function renderDash() {
 
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0">
         <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:10px;text-align:center">
-          <div style="font-size:20px;font-weight:800;color:var(--accent-l)">${progWeeks}<span style="font-size:12px;color:var(--muted)"> / ${GOAL_WEEKS}</span></div>
+          <div style="font-size:20px;font-weight:800;color:var(--accent-l)">${semanaActual}<span style="font-size:12px;color:var(--muted)"> / ${GOAL_WEEKS}</span></div>
           <div style="font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px">Semana</div>
         </div>
         <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:10px;text-align:center">
@@ -615,8 +618,8 @@ function renderDash() {
 
       <div class="prog-wrap">
         <div class="prog-label">
-          <span>Progreso del programa</span>
-          <span>${progPct}%</span>
+          <span>Semanas completadas</span>
+          <span>${semanasCompletadas} / ${GOAL_WEEKS}</span>
         </div>
         <div class="prog-bar"><div class="prog-fill" style="width:${progPct}%"></div></div>
       </div>
