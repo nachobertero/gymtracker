@@ -505,7 +505,11 @@ function getProgressWeeks() {
 }
 
 function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+  // Genera UUID v4 válido requerido por Supabase
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
 }
 
 // ─── NAVIGATE ─────────────────────────────────
