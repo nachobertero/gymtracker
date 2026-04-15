@@ -543,14 +543,13 @@ function renderDash() {
   const dow = getDayOfWeek();
   const dayData = WEEKLY_ROUTINE[dow];
   const streak = getStreak();
-  const weekVol = Math.round(getWeekVolume());
-  const progWeeks = Math.max(1, getProgressWeeks());
   const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
 
   // Métricas híbridas
   const SESSIONS_GOAL = 120; // 5 días × 24 semanas
-  const semanasCompletadas = getProgressWeeks();           // semanas 100% terminadas
-  const semanaActual = Math.min(semanasCompletadas + 1, GOAL_WEEKS); // semana en curso
+  const semanasCompletadas = getProgressWeeks();           // semanas 100% terminadas (0 durante sem 1)
+  const semanaActual = Math.min(semanasCompletadas + 1, GOAL_WEEKS); // semana en curso (1 ahora)
+  const pesoActual = weights.length > 0 ? weights[weights.length - 1].weight : null;
   const diasEntrenados = new Set(workouts.map(w => w.date)).size;
   // Efectividad solo sobre semanas ya cerradas (no la actual, que aún no terminó)
   const diasEsperados = semanasCompletadas * 5;
@@ -635,11 +634,11 @@ function renderDash() {
         <div class="stat-lbl">Total entrenamientos</div>
       </div>
       <div class="stat">
-        <div class="stat-val">${weekVol > 0 ? (weekVol >= 1000 ? (weekVol/1000).toFixed(1)+'t' : weekVol+'kg') : '—'}</div>
-        <div class="stat-lbl">Volumen esta semana</div>
+        <div class="stat-val">${pesoActual ? pesoActual + 'kg' : '—'}</div>
+        <div class="stat-lbl">Peso actual</div>
       </div>
       <div class="stat">
-        <div class="stat-val">${progWeeks}</div>
+        <div class="stat-val">${semanasCompletadas}</div>
         <div class="stat-lbl">Semanas completadas</div>
       </div>
     </div>
