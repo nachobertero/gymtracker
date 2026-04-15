@@ -619,8 +619,21 @@ function renderDash() {
     </div>
 
     <div class="card">
-      <div class="card-title"><span class="dot" style="background:var(--warning)"></span>Backup de datos</div>
-      <div class="text-muted mb10" style="font-size:13px">Exportá tu progreso antes de perderlo. localStorage vive en el navegador — si limpiás datos, se borra.</div>
+      <div class="card-title"><span class="dot" style="background:var(--warning)"></span>Sincronización & Backup</div>
+      ${currentUser ? `
+        <div style="margin-bottom:12px">
+          <div style="font-size:13px;color:var(--success);margin-bottom:8px">✅ Sincronizado en la nube (${currentUser.email})</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Tus datos están en Supabase. Se actualizan automáticamente en todos tus dispositivos.</div>
+          <div class="row">
+            <button class="btn btn-secondary btn-sm" onclick="syncFromSupabase();toast('🔄 Sincronizando...')">🔄 Sincronizar ahora</button>
+            <button class="btn btn-danger btn-sm" onclick="authLogout()">🚪 Cerrar sesión</button>
+          </div>
+        </div>
+        <hr style="margin:12px 0;border:none;border-top:1px solid var(--border)">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:10px">Backup local (para emergencias)</div>
+      ` : `
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Inicia sesión para sincronizar en la nube y acceder desde cualquier dispositivo.</div>
+      `}
       <div class="row">
         <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Exportar JSON</button>
         <button class="btn btn-secondary btn-sm" onclick="importData()">⬆ Importar JSON</button>
@@ -1534,10 +1547,21 @@ async function syncWeightToSupabase(date, weight) {
   if (error) console.error('Error syncing weight:', error);
 }
 
-function deleteWeight(date) {
+async function deleteWeight(date) {
   if (!confirm('¿Eliminar este registro?')) return;
   weights = weights.filter(w => w.date !== date);
   saveData();
+
+  // Sync delete to Supabase
+  if (currentUser) {
+    const { error } = await supabase
+      .from('weight_tracking')
+      .delete()
+      .eq('user_id', currentUser.id)
+      .eq('date', date);
+    if (error) console.error('Error deleting weight:', error);
+  }
+
   renderWeight();
   toast('Eliminado');
 }
@@ -1750,9 +1774,8 @@ async function syncToSupabase() {
     if (error) console.error('Error syncing weight:', error);
   }
 
-  // Sync diet
+  // Sync diet (ALL meals, including uncompleted)
   for (const [key, value] of Object.entries(dietLog)) {
-    if (!value) continue;
     const [dateStr, mealName] = key.split('__');
     const { error } = await supabase
       .from('diet_log')
@@ -1760,7 +1783,7 @@ async function syncToSupabase() {
         user_id: currentUser.id,
         date: dateStr,
         meal_name: mealName,
-        completed: true,
+        completed: value === true,
         updated_at: new Date().toISOString()
       }, { onConflict: 'user_id,date,meal_name' });
     if (error) console.error('Error syncing diet:', error);
@@ -1772,13 +1795,15 @@ async function syncToSupabase() {
 async function syncFromSupabase() {
   if (!currentUser) return;
 
-  // Load workouts
+  // Load workouts from Supabase
   const { data: woData } = await supabase
     .from('workouts')
     .select('*')
     .eq('user_id', currentUser.id)
     .order('date', { ascending: false });
 
+  // Replace local workouts with cloud version
+  workouts = [];
   if (woData && woData.length > 0) {
     workouts = woData.map(w => ({
       id: w.id,
@@ -1789,13 +1814,15 @@ async function syncFromSupabase() {
     }));
   }
 
-  // Load weights
+  // Load weights from Supabase
   const { data: wData } = await supabase
     .from('weight_tracking')
     .select('*')
     .eq('user_id', currentUser.id)
     .order('date', { ascending: true });
 
+  // Replace local weights with cloud version
+  weights = [];
   if (wData && wData.length > 0) {
     weights = wData.map(w => ({
       date: w.date,
@@ -1803,23 +1830,93 @@ async function syncFromSupabase() {
     }));
   }
 
-  // Load diet
+  // Load diet from Supabase
   const { data: dData } = await supabase
     .from('diet_log')
     .select('*')
-    .eq('user_id', currentUser.id)
-    .eq('completed', true);
+    .eq('user_id', currentUser.id);
 
+  // Replace local diet with cloud version
   dietLog = {};
   if (dData && dData.length > 0) {
     dData.forEach(d => {
       const key = `${d.date}__${d.meal_name}`;
-      dietLog[key] = true;
+      dietLog[key] = d.completed;
     });
   }
 
   saveData();
   saveDietLog();
+
+  // Set up real-time listeners
+  setupRealtimeListeners();
+}
+
+function setupRealtimeListeners() {
+  if (!currentUser) return;
+
+  // Listen to workout changes
+  supabase
+    .channel('workouts_channel')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'workouts', filter: `user_id=eq.${currentUser.id}` }, (payload) => {
+      if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+        const w = payload.new;
+        const idx = workouts.findIndex(wo => wo.id === w.id);
+        if (idx >= 0) {
+          workouts[idx] = { id: w.id, date: w.date, day_of_week: w.day_of_week, exercises: w.exercises, notes: w.notes };
+        } else {
+          workouts.push({ id: w.id, date: w.date, day_of_week: w.day_of_week, exercises: w.exercises, notes: w.notes });
+        }
+        workouts.sort((a, b) => b.date.localeCompare(a.date));
+        saveData();
+        if (document.querySelector('.page.active')?.id === 'page-dash') renderDash();
+        if (document.querySelector('.page.active')?.id === 'page-hist') renderHist();
+        if (document.querySelector('.page.active')?.id === 'page-anal') renderAnal();
+      } else if (payload.eventType === 'DELETE') {
+        workouts = workouts.filter(w => w.id !== payload.old.id);
+        saveData();
+        if (document.querySelector('.page.active')?.id === 'page-dash') renderDash();
+      }
+    })
+    .subscribe();
+
+  // Listen to weight changes
+  supabase
+    .channel('weights_channel')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'weight_tracking', filter: `user_id=eq.${currentUser.id}` }, (payload) => {
+      if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+        const w = payload.new;
+        const idx = weights.findIndex(wo => wo.date === w.date);
+        if (idx >= 0) {
+          weights[idx] = { date: w.date, weight: w.weight };
+        } else {
+          weights.push({ date: w.date, weight: w.weight });
+        }
+        weights.sort((a, b) => a.date.localeCompare(b.date));
+        saveData();
+        if (document.querySelector('.page.active')?.id === 'page-weight') renderWeight();
+      } else if (payload.eventType === 'DELETE') {
+        weights = weights.filter(w => w.date !== payload.old.date);
+        saveData();
+        if (document.querySelector('.page.active')?.id === 'page-weight') renderWeight();
+      }
+    })
+    .subscribe();
+
+  // Listen to diet changes
+  supabase
+    .channel('diet_channel')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'diet_log', filter: `user_id=eq.${currentUser.id}` }, (payload) => {
+      const key = `${payload.new?.date || payload.old?.date}__${payload.new?.meal_name || payload.old?.meal_name}`;
+      if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+        dietLog[key] = payload.new.completed;
+      } else if (payload.eventType === 'DELETE') {
+        delete dietLog[key];
+      }
+      saveDietLog();
+      if (document.querySelector('.page.active')?.id === 'page-diet') renderDiet();
+    })
+    .subscribe();
 }
 
 // ─── INIT ─────────────────────────────────────
