@@ -514,6 +514,19 @@ function getLastWeightForExercise(exerciseName) {
   return null;
 }
 
+function parseMaxReps(repsStr) {
+  if (!repsStr) return '';
+  const str = String(repsStr).trim();
+  // "6-8" → "8", "12-15" → "15"
+  const rangeMatch = str.match(/(\d+)-(\d+)/);
+  if (rangeMatch) return rangeMatch[2];
+  // Solo número: "12" → "12"
+  const numMatch = str.match(/^(\d+)/);
+  if (numMatch) return numMatch[1];
+  // "Máx", "c/lado", etc → tal cual
+  return str;
+}
+
 function getExercisesWithDefaults() {
   const dow = getDayOfWeek();
   const dayData = WEEKLY_ROUTINE[dow];
@@ -527,7 +540,7 @@ function getExercisesWithDefaults() {
       const sets = [];
       for (let i = 0; i < numSets; i++) {
         sets.push({
-          reps: e.reps || '',
+          reps: parseMaxReps(e.reps),
           weight: lastWeight || '',
           done: false
         });
@@ -777,7 +790,7 @@ function startWorkoutFromRoutine() {
   const dow = getDayOfWeek();
   const dayData = WEEKLY_ROUTINE[dow];
   const exercises = getExercisesWithDefaults();
-  const debugSet = exercises.length > 0 ? exercises[0].sets[0] : null; alert('exercises=' + exercises.length + '\nEx1: ' + (exercises[0]?.name || 'none') + '\nSet1 reps: ' + JSON.stringify(debugSet?.reps) + '\nSet1 weight: ' + JSON.stringify(debugSet?.weight));
+  
   if (exercises.length > 0) {
     console.log('  Ex1:', exercises[0].name, exercises[0].sets[0]);
   }
