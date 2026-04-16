@@ -776,10 +776,15 @@ let logState = {
 function startWorkoutFromRoutine() {
   const dow = getDayOfWeek();
   const dayData = WEEKLY_ROUTINE[dow];
+  const exercises = getExercisesWithDefaults();
+  console.log('🔍 startWorkout:', {dow, hasData: !!dayData, exerciseCount: exercises.length});
+  if (exercises.length > 0) {
+    console.log('  Ex1:', exercises[0].name, exercises[0].sets[0]);
+  }
   logState = {
     date: today(),
     muscleGroups: [...(dayData?.groups || [])],
-    exercises: getExercisesWithDefaults(), // Auto-fill con programa y último peso
+    exercises: exercises,
     notes: ''
   };
   navigate('log');
