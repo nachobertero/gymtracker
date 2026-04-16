@@ -30,57 +30,55 @@ const EXERCISE_DB = {
 };
 
 
-// ─── RUTINAS DE SÁBADO (rotativas) ───────────────
+// ─── RUTINAS DE SÁBADO (rotativas: tren superior + glúteos) ───
 const SATURDAY_ROUTINES = [
-  { // Semana 1, 5, 9, 13, 17, 21 (cada 4 semanas)
-    label: 'SÁBADO — GLÚTEOS EXTRA 🍑',
-    emoji: '🍑',
-    groups: ['Glúteos', 'Piernas'],
-    note: 'Enfoque en crecimiento de glúteos. Post-entrenamiento: proteína + carbos.',
+  { // Semana 1, 5, 9, 13, 17, 21
+    label: 'SÁBADO — PECHO + GLÚTEOS 💪🍑',
+    emoji: '💪',
+    groups: ['Pecho', 'Glúteos'],
+    note: 'Tren superior + estimulo de glúteos. Completar el trabajo de la semana.',
     exercises: [
-      { name: 'Hip thrust con barra (pausado)', sets: 4, reps: '12-15', key: true },
-      { name: 'Prensa de piernas (pie alto)', sets: 4, reps: '12-15', key: true },
-      { name: 'Leg press lateral (abductor)', sets: 3, reps: '15', key: true },
-      { name: 'Extensión de cuádriceps en máquina', sets: 3, reps: '15' },
-      { name: 'Patada de glúteo en polea (high reps)', sets: 3, reps: '20 c/lado' },
-      { name: '★ Glute bridge isométrico 3×30s (pausa activa)', sets: null, reps: null, pause: true },
+      { name: 'Press de banca o inclinado (variante)', sets: 4, reps: '8-10', key: true },
+      { name: 'Aperturas con mancuernas', sets: 3, reps: '12-15' },
+      { name: 'Hip thrust con barra (pausado)', sets: 3, reps: '12-15', key: true },
+      { name: 'Patada de glúteo en polea', sets: 3, reps: '15 c/lado', key: true },
+      { name: 'Fondos en paralelas', sets: 3, reps: '10-12' },
+      { name: 'Glute bridge isométrico 3×30s (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
   { // Semana 2, 6, 10, 14, 18, 22
-    label: 'SÁBADO — BRAZOS 💪',
+    label: 'SÁBADO — BRAZOS + GLÚTEOS 💪🍑',
     emoji: '💪',
-    groups: ['Bíceps', 'Tríceps'],
-    note: 'Aislamiento y pump. Brazos grandes = proporción en ectomorfo.',
+    groups: ['Bíceps', 'Tríceps', 'Glúteos'],
+    note: 'Aislamiento de brazos + trabajo ligero de glúteos.',
     exercises: [
       { name: 'Curl con barra', sets: 4, reps: '8-10', key: true },
       { name: 'Curl martillo con mancuernas', sets: 3, reps: '10-12' },
-      { name: 'Curl concentrado', sets: 3, reps: '12' },
       { name: 'Press francés (EZ bar)', sets: 4, reps: '10-12', key: true },
       { name: 'Pushdown en polea con cuerda', sets: 3, reps: '12-15' },
-      { name: 'Extensión de tríceps con mancuerna (detrás cabeza)', sets: 3, reps: '12' },
-      { name: '★ Plancha 3×30s (pausa activa)', sets: null, reps: null, pause: true },
+      { name: 'Hip thrust ligero o Abductor en máquina', sets: 2, reps: '15' },
+      { name: 'Plancha 3×30s (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
   { // Semana 3, 7, 11, 15, 19, 23
-    label: 'SÁBADO — ESPALDA 🏋️',
+    label: 'SÁBADO — ESPALDA + GLÚTEOS 🏋️🍑',
     emoji: '🏋️',
-    groups: ['Espalda', 'Core'],
-    note: 'Espalda ancha y fuerte. Complemento de la semana.',
+    groups: ['Espalda', 'Glúteos'],
+    note: 'Espalda ancha + estimulo específico de glúteos.',
     exercises: [
       { name: 'Dominadas (o jalón asistido)', sets: 4, reps: '6-8', key: true },
       { name: 'Remo en máquina', sets: 4, reps: '10-12', key: true },
+      { name: 'Peso muerto rumano ligero', sets: 3, reps: '10-12', key: true },
       { name: 'Remo en polea baja unilateral', sets: 3, reps: '10 c/lado' },
-      { name: 'Pullover con mancuerna', sets: 3, reps: '12' },
-      { name: 'Remo horizontal en máquina Smith', sets: 3, reps: '12' },
-      { name: 'Encogimientos con barra', sets: 3, reps: '12-15' },
-      { name: '★ Dead bug 3×10 c/lado (pausa activa)', sets: null, reps: null, pause: true },
+      { name: 'Patada de glúteo en polea (high reps)', sets: 3, reps: '15 c/lado', key: true },
+      { name: 'Dead bug 3×10 c/lado (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
   { // Semana 4, 8, 12, 16, 20, 24
     label: 'SÁBADO — RECUPERACIÓN ACTIVA 🧘',
     emoji: '🧘',
     groups: ['Full Body'],
-    note: 'El músculo crece en el descanso. Movilidad, stretching, cardio ligero.',
+    note: 'El músculo crece en el descanso. Movilidad y stretching.',
     exercises: [
       { name: 'Caminar 30-40 min (ritmo conversacional)', sets: 1, reps: '30-40 min', key: true },
       { name: 'Stretching dinámico (10 min)', sets: 1, reps: '10 min' },
@@ -92,330 +90,6 @@ const SATURDAY_ROUTINES = [
   }
 ];
 
-
-const MUSCLE_GROUPS = Object.keys(EXERCISE_DB);
-
-// ─── RUTINA SEMANAL ───────────────────────────
-const WEEKLY_ROUTINE = {
-  1: { // Lunes
-    label: 'PECHO + TRÍCEPS',
-    emoji: '💪',
-    groups: ['Pecho', 'Tríceps'],
-    note: 'Post-fútbol. Sin piernas. Carga seria desde el minuto uno.',
-    exercises: [
-      { name: 'Press de banca', sets: 4, reps: '6-8', key: true },
-      { name: 'Press inclinado con mancuernas', sets: 4, reps: '8-10' },
-      { name: 'Aperturas con mancuernas', sets: 3, reps: '12-15' },
-      { name: 'Fondos en paralelas', sets: 3, reps: 'Máx' },
-      { name: 'Superserie: Press francés + Pushdown', sets: 3, reps: '10+12' },
-      { name: '★ Crunch con peso 3×15 (pausa activa)', sets: null, reps: null, pause: true },
-    ]
-  },
-  2: { // Martes
-    label: 'ESPALDA + BÍCEPS',
-    emoji: '🏋️',
-    groups: ['Espalda', 'Bíceps'],
-    note: 'Espalda ancha = V invertida. Dominadas lastradas si podés. Pesado.',
-    exercises: [
-      { name: 'Dominadas (lastradas si podés)', sets: 4, reps: 'Máx', key: true },
-      { name: 'Remo con barra', sets: 4, reps: '6-8', key: true },
-      { name: 'Remo con mancuerna unilateral', sets: 3, reps: '10 c/lado' },
-      { name: 'Pullover con mancuerna', sets: 3, reps: '12' },
-      { name: 'Curl con barra', sets: 3, reps: '8-10' },
-      { name: 'Curl martillo', sets: 3, reps: '10' },
-      { name: '★ Plancha 3×40s (pausa activa)', sets: null, reps: null, pause: true },
-    ]
-  },
-  3: { // Miércoles
-    label: 'HOMBROS + CORE',
-    emoji: '🎯',
-    groups: ['Hombros', 'Core'],
-    note: 'Post-fútbol. Press pesado + laterales controladas. Hombros de bestia.',
-    exercises: [
-      { name: 'Press militar con barra', sets: 4, reps: '6-8', key: true },
-      { name: 'Elevaciones laterales', sets: 4, reps: '12-15' },
-      { name: 'Elevaciones frontales con disco', sets: 3, reps: '12' },
-      { name: 'Pájaro (deltoides posterior)', sets: 3, reps: '15' },
-      { name: 'Face pulls en polea', sets: 3, reps: '15' },
-      { name: 'Encogimientos con barra', sets: 3, reps: '12' },
-      { name: '★ Russian twist con disco 3×20 (pausa activa)', sets: null, reps: null, pause: true },
-    ]
-  },
-  4: { // Jueves
-    label: '🔥 PIERNAS + GLÚTEOS',
-    emoji: '🔥',
-    groups: ['Piernas', 'Glúteos'],
-    note: '28 años sin glúteos terminan HOY. Hip thrust PESADO. Sentadilla PROFUNDA. Patada en polea para rematar.',
-    exercises: [
-      { name: 'Sentadilla con barra (profunda)', sets: 4, reps: '6-8', key: true },
-      { name: 'Hip thrust con barra (pausa 2s arriba)', sets: 4, reps: '10-12', key: true },
-      { name: 'Sentadilla búlgara', sets: 3, reps: '10 c/lado' },
-      { name: 'Peso muerto rumano', sets: 4, reps: '8-10', key: true },
-      { name: 'Abductor en máquina (peso alto)', sets: 3, reps: '15', key: true },
-      { name: 'Patada de glúteo en polea (extensión completa)', sets: 3, reps: '12 c/lado', key: true },
-      { name: 'Curl de isquiotibiales', sets: 3, reps: '12' },
-      { name: 'Elevación de talones', sets: 4, reps: '20' },
-      { name: '★ Elevación de piernas colgado 3×12 (pausa activa)', sets: null, reps: null, pause: true },
-    ]
-  },
-  5: { // Viernes
-    label: 'FULL BODY + GLÚTEOS',
-    emoji: '⚡',
-    groups: ['Full Body', 'Glúteos'],
-    note: '2do estímulo de glúteos en la semana. Los grupos rezagados necesitan frecuencia 2×/sem mínimo.',
-    exercises: [
-      { name: 'Peso muerto convencional', sets: 4, reps: '5', key: true },
-      { name: 'Hip thrust (más liviano, 15 reps, squeeze arriba)', sets: 3, reps: '15', key: true },
-      { name: 'Press militar con barra', sets: 3, reps: '8' },
-      { name: 'Dominadas', sets: 3, reps: 'Máx' },
-      { name: 'Sentadilla goblet profunda', sets: 3, reps: '12' },
-      { name: 'Patada de glúteo en polea', sets: 3, reps: '15 c/lado', key: true },
-      { name: 'Superserie: Remo en polea + Curl mancuernas', sets: 3, reps: '10+10' },
-      { name: '★ Rueda abdominal 3×12 (pausa activa)', sets: null, reps: null, pause: true },
-    ]
-  },
-  6: { label: 'DESCANSO', emoji: '😴', groups: [], note: 'Recuperación activa. El músculo crece mientras descansás.', exercises: [] },
-  0: { label: 'DESCANSO', emoji: '😴', groups: [], note: 'Domingo. Recargar para la semana.', exercises: [] },
-};
-
-// ─── FRASES MOTIVACIONALES ────────────────────
-const QUOTES = [
-  'El cuerpo que querés está del otro lado del esfuerzo que evitás.',
-  'En invierno se construye el verano. Levantate.',
-  'Cada repetición que hacés cuando no querés vale el doble.',
-  'No es el gym que te da el cuerpo, es la constancia.',
-  'Los glúteos no van a crecer solos. Jueves sagrado.',
-  'Flaco hoy. Bestia en 6 meses. Depende de vos.',
-  'La motivación te arranca. El hábito te lleva.',
-  'Cada kilo más en la barra es un kilo más cerca del objetivo.',
-  'Tu yo del futuro te va a agradecer que fuiste hoy.',
-  'Afuera hace frío. Adentro se forjan campeones.',
-  'No comparés tu capítulo 1 con el capítulo 20 de otro.',
-  'El dolor de no intentarlo dura más que el de entrenar.',
-];
-
-// ─── PROGRAMA COMPLETO ────────────────────────
-const PROGRAM = [
-  {
-    phase: 'FASE 1 — RE-ACTIVACIÓN',
-    weeks: 'Semanas 1–4',
-    desc: 'Re-adaptación post-vacaciones. Recuperar fuerza, afinar técnica, subir cargas rápido. Ya tenés base de 1 año — acá no se arranca suave.',
-    color: '#7c3aed',
-    days: [
-      {
-        day: 'LUNES', label: 'PECHO + TRÍCEPS', emoji: '💪',
-        note: 'Post-fútbol. Sin piernas. Reactivar pecho con carga seria desde el día 1.',
-        exercises: [
-          { name: 'Press de banca', spec: '4×6-8 (pesado, buscar tu 80%)', key: true },
-          { name: 'Press inclinado con mancuernas', spec: '4×8-10' },
-          { name: 'Aperturas con mancuernas', spec: '3×12-15 (contracción lenta)' },
-          { name: 'Fondos en paralelas', spec: '3×Máx (lastre si podés +10)' },
-          { name: 'Superserie: Press francés + Pushdown cuerda', spec: '3×10+12' },
-          { name: '★ Pausa activa: Crunch con peso 3×15', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'MARTES', label: 'ESPALDA + BÍCEPS', emoji: '🏋️',
-        note: 'Espalda ancha = V invertida. Dominadas son tu mejor amigo. Si hacés menos de 8, usá jalón pesado.',
-        exercises: [
-          { name: 'Dominadas (lastradas si podés)', spec: '4×Máx', key: true },
-          { name: 'Remo con barra', spec: '4×6-8 (pesado)', key: true },
-          { name: 'Remo con mancuerna unilateral', spec: '3×10 c/lado (pausa 1s arriba)' },
-          { name: 'Pullover con mancuerna', spec: '3×12' },
-          { name: 'Curl con barra (EZ o recta)', spec: '3×8-10' },
-          { name: 'Curl martillo', spec: '3×10' },
-          { name: '★ Pausa activa: Plancha 3×40s', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'MIÉRCOLES', label: 'HOMBROS + CORE', emoji: '🎯',
-        note: 'Post-fútbol. Hombros anchos + trapecios = presencia de bestia. Press pesado.',
-        exercises: [
-          { name: 'Press militar con barra', spec: '4×6-8 (pesado)', key: true },
-          { name: 'Elevaciones laterales', spec: '4×12-15 (sin trampa, controlado)' },
-          { name: 'Elevaciones frontales con disco', spec: '3×12' },
-          { name: 'Pájaro (deltoides posterior)', spec: '3×15' },
-          { name: 'Face pulls en polea', spec: '3×15' },
-          { name: 'Encogimientos con barra', spec: '3×12' },
-          { name: '★ Pausa activa: Russian twist con disco 3×20', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'JUEVES', label: 'PIERNAS + GLÚTEOS ⭐', emoji: '🔥',
-        note: '28 años sin glúteos terminan HOY. Hip thrust PESADO. Patada en polea para rematar.',
-        exercises: [
-          { name: 'Sentadilla con barra (profunda, romper paralelo)', spec: '4×6-8', key: true },
-          { name: 'Hip thrust con barra (PESADO, pausa 2s arriba)', spec: '4×10-12', key: true },
-          { name: 'Sentadilla búlgara', spec: '3×10 c/lado' },
-          { name: 'Peso muerto rumano', spec: '4×8-10', key: true },
-          { name: 'Abductor en máquina (peso alto)', spec: '3×15', key: true },
-          { name: 'Patada de glúteo en polea (extensión completa)', spec: '3×12 c/lado', key: true },
-          { name: 'Curl de isquiotibiales', spec: '3×12' },
-          { name: 'Elevación de talones', spec: '4×20' },
-          { name: '★ Pausa activa: Elevación de piernas colgado 3×12', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'VIERNES', label: 'FULL BODY + GLÚTEOS', emoji: '⚡',
-        note: '2do estímulo de glúteos. Frecuencia 2×/sem = crecimiento de grupos rezagados.',
-        exercises: [
-          { name: 'Peso muerto convencional', spec: '4×5 (pesado)', key: true },
-          { name: 'Hip thrust (liviano, squeeze arriba)', spec: '3×15', key: true },
-          { name: 'Press militar con barra', spec: '3×8' },
-          { name: 'Dominadas', spec: '3×Máx' },
-          { name: 'Sentadilla goblet profunda', spec: '3×12' },
-          { name: 'Patada de glúteo en polea', spec: '3×15 c/lado', key: true },
-          { name: 'Superserie: Remo en polea + Curl mancuernas', spec: '3×10+10' },
-          { name: '★ Pausa activa: Rueda abdominal 3×12', spec: '', pause: true },
-        ]
-      },
-    ]
-  },
-  {
-    phase: 'FASE 2 — VOLUMEN',
-    weeks: 'Semanas 5–12',
-    desc: '+1 serie por ejercicio. Rotar variantes de ejercicios. Introducir superseries antagonistas. Overload progresivo obligatorio.',
-    color: '#ec4899',
-    days: [
-      {
-        day: 'LUNES', label: 'PECHO + TRÍCEPS', emoji: '💪',
-        note: 'Misma estructura, +1 serie, rotar ejercicios: inclinado → declinado → neutro.',
-        exercises: [
-          { name: 'Press de banca / Press declinado (alternar)', spec: '5×6-8', key: true },
-          { name: 'Press inclinado mancuernas', spec: '4×10' },
-          { name: 'Cable crossover', spec: '4×12 + drop set final' },
-          { name: 'Fondos en paralelas', spec: '4×Máx' },
-          { name: 'Press cerrado en banca', spec: '3×10' },
-          { name: '★ Pausa activa: Crunch con peso 3×15', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'MARTES', label: 'ESPALDA + BÍCEPS', emoji: '🏋️',
-        note: 'Superseries espalda+bíceps. Más densidad de entrenamiento.',
-        exercises: [
-          { name: 'Dominadas lastradas (o jalón)', spec: '5×Máx', key: true },
-          { name: 'Remo con barra', spec: '5×8', key: true },
-          { name: 'Superserie: Remo mancuerna + Curl martillo', spec: '3×10+10' },
-          { name: 'Remo en máquina', spec: '3×12' },
-          { name: 'Curl Scott', spec: '3×10' },
-          { name: 'Curl concentrado', spec: '3×12 c/lado' },
-          { name: '★ Pausa activa: Plancha lateral 3×30s c/lado', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'MIÉRCOLES', label: 'HOMBROS + CORE', emoji: '🎯',
-        note: 'Aumentar carga en press militar. Agregar trabajo de trapecios.',
-        exercises: [
-          { name: 'Press Arnold', spec: '4×10', key: true },
-          { name: 'Press militar con barra', spec: '4×8' },
-          { name: 'Elevaciones laterales', spec: '5×12-15 + drop set' },
-          { name: 'Pájaro inclinado', spec: '4×15' },
-          { name: 'Encogimientos con barra', spec: '3×15' },
-          { name: '★ Pausa activa: Dead bug 3×10 c/lado', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'JUEVES', label: 'PIERNAS + GLÚTEOS ⭐', emoji: '🔥',
-        note: 'Aumentar hip thrust cada semana. Patada en polea + abductor para matar glúteos.',
-        exercises: [
-          { name: 'Sentadilla con barra', spec: '5×6-8', key: true },
-          { name: 'Hip thrust con barra', spec: '5×10-12 + pausa 1s arriba', key: true },
-          { name: 'Sentadilla búlgara', spec: '4×10 c/lado' },
-          { name: 'Peso muerto rumano', spec: '4×10', key: true },
-          { name: 'Prensa de piernas (pie alto = más glúteo)', spec: '3×12' },
-          { name: 'Abductor en máquina', spec: '4×15' },
-          { name: 'Patada de glúteo en polea', spec: '4×12 c/lado', key: true },
-          { name: 'Elevación de talones', spec: '4×20' },
-          { name: '★ Pausa activa: Elevación de piernas 3×15', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'VIERNES', label: 'FULL BODY + GLÚTEOS', emoji: '⚡',
-        note: '2do estímulo de glúteos. Superseries para densidad.',
-        exercises: [
-          { name: 'Peso muerto', spec: '5×4-5', key: true },
-          { name: 'Hip thrust (liviano, alto reps)', spec: '3×15', key: true },
-          { name: 'Superserie: Press militar + Jalón al pecho', spec: '3×8+10' },
-          { name: 'Sentadilla frontal o goblet', spec: '3×10' },
-          { name: 'Patada de glúteo en polea', spec: '3×15 c/lado', key: true },
-          { name: 'Superserie: Curl barra + Pushdown', spec: '3×10+10' },
-          { name: '★ Pausa activa: Rueda abdominal 3×12', spec: '', pause: true },
-        ]
-      },
-    ]
-  },
-  {
-    phase: 'FASE 3 — INTENSIFICACIÓN',
-    weeks: 'Semanas 13–24',
-    desc: 'Técnicas avanzadas: drop sets, rest-pause, superseries antagonistas. Pico de forma. Máxima intensidad.',
-    color: '#f59e0b',
-    days: [
-      {
-        day: 'LUNES', label: 'PECHO + TRÍCEPS', emoji: '💪',
-        note: 'Drop sets en cada último set. Rest-pause en press de banca.',
-        exercises: [
-          { name: 'Press de banca (rest-pause en último set)', spec: '5×5 + rest-pause', key: true },
-          { name: 'Press inclinado mancuernas', spec: '4×8 + drop set' },
-          { name: 'Aperturas en polea alta', spec: '4×12-15' },
-          { name: 'Fondos lastrados', spec: '4×Máx' },
-          { name: 'Superserie: Press francés + Press cerrado', spec: '3×10+10' },
-          { name: '★ Pausa activa: Crunch con rueda 3×12', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'MARTES', label: 'ESPALDA + BÍCEPS', emoji: '🏋️',
-        note: 'Máxima intensidad. Cada set al límite.',
-        exercises: [
-          { name: 'Dominadas lastradas', spec: '5×Máx', key: true },
-          { name: 'Peso muerto (estilo sumo o convencional)', spec: '4×5', key: true },
-          { name: 'Remo con barra', spec: '4×8 + drop set' },
-          { name: 'Remo en máquina', spec: '3×10 + pausa 2s' },
-          { name: 'Curl con barra (rest-pause)', spec: '3×8 + rest-pause' },
-          { name: 'Curl concentrado', spec: '3×12 c/lado' },
-          { name: '★ Pausa activa: Bird dog 3×10 c/lado', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'MIÉRCOLES', label: 'HOMBROS + CORE', emoji: '🎯',
-        note: 'Drop sets en elevaciones laterales. Press pesado.',
-        exercises: [
-          { name: 'Press militar pesado', spec: '5×5', key: true },
-          { name: 'Elevaciones laterales', spec: '5×10 + 3 drop sets' },
-          { name: 'Pájaro', spec: '4×15' },
-          { name: 'Superserie: Face pulls + Elevaciones frontales', spec: '3×12+12' },
-          { name: '★ Pausa activa: Hollow hold 3×30s', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'JUEVES', label: 'PIERNAS + GLÚTEOS ⭐', emoji: '🔥',
-        note: 'El día definitivo. Hip thrust máximo peso. Patada en polea con drop set. Glúteos al límite absoluto.',
-        exercises: [
-          { name: 'Sentadilla con barra', spec: '5×5 pesado', key: true },
-          { name: 'Hip thrust con barra (máximo peso)', spec: '5×8-10', key: true },
-          { name: 'Sentadilla búlgara + drop set', spec: '4×8 c/lado' },
-          { name: 'Peso muerto rumano', spec: '4×8 + pausa 2s abajo', key: true },
-          { name: 'Superserie: Abductor + Patada de glúteo en polea', spec: '4×15+12', key: true },
-          { name: 'Prensa (pie alto)', spec: '3×10 + drop set' },
-          { name: 'Elevación de talones', spec: '5×20' },
-          { name: '★ Pausa activa: Elevación de piernas + oblicuos', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'VIERNES', label: 'FULL BODY + GLÚTEOS', emoji: '⚡',
-        note: '2do estímulo de glúteos. Todo al máximo. Vos lo pediste.',
-        exercises: [
-          { name: 'Peso muerto (PR intent)', spec: '5×3-4', key: true },
-          { name: 'Hip thrust (mecánico: pesado→liviano, sin parar)', spec: '3×8+8+8', key: true },
-          { name: 'Press militar', spec: '4×6' },
-          { name: 'Dominadas', spec: '4×Máx' },
-          { name: 'Patada de glúteo en polea + drop set', spec: '3×12 c/lado', key: true },
-          { name: 'Superserie: Curl barra + Pushdown cuerda', spec: '4×10+10' },
-          { name: '★ Pausa activa: Rueda + planchas 3×10', spec: '', pause: true },
-        ]
-      },
-    ]
-  },
-];
 
 // ─── NUTRICIÓN ────────────────────────────────
 const NUTRITION = {
