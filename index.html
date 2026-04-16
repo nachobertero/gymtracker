@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>GYM TRACKER — Nacho</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#7c3aed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GYM">
+  <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.43.4"></script>
   <style>
@@ -470,5 +479,16 @@
 </nav>
 
 <script src="app.js"></script>
+
+<script>
+  // Registrar Service Worker para PWA
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('✅ SW registrado:', reg.scope))
+        .catch(err => console.log('❌ SW error:', err));
+    });
+  }
+</script>
 </body>
 </html>
