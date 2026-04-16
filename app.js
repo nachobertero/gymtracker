@@ -499,6 +499,47 @@ function getWeekVolume() {
     .reduce((sum, w) => sum + getTotalVolume(w), 0);
 }
 
+function getLastWeightForExercise(exerciseName) {
+  // Busca en orden inverso (más reciente primero) el último peso registrado para un ejercicio
+  if (!exerciseName || !workouts.length) return null;
+  const nameLower = exerciseName.toLowerCase().trim();
+  for (let i = workouts.length - 1; i >= 0; i--) {
+    const w = workouts[i];
+    const ex = w.exercises.find(e => e.name.toLowerCase().trim() === nameLower);
+    if (ex && ex.sets && ex.sets.length > 0) {
+      const maxWeight = Math.max(...ex.sets.map(s => s.weight || 0));
+      if (maxWeight > 0) return maxWeight.toString();
+    }
+  }
+  return null;
+}
+
+function getExercisesWithDefaults() {
+  const dow = getDayOfWeek();
+  const dayData = WEEKLY_ROUTINE[dow];
+  if (!dayData || !dayData.exercises) return [];
+
+  return dayData.exercises
+    .filter(e => !e.pause) // Excluir pausas activas
+    .map(e => {
+      const lastWeight = getLastWeightForExercise(e.name);
+      const numSets = e.sets || 3;
+      const sets = [];
+      for (let i = 0; i < numSets; i++) {
+        sets.push({
+          reps: e.reps || '',
+          weight: lastWeight || '',
+          done: false
+        });
+      }
+      return {
+        id: uid(),
+        name: e.name,
+        sets
+      };
+    });
+}
+
 function getProgressWeeks() {
   const start = new Date(START_DATE + 'T00:00:00');
   // Usar la fecha más reciente entre hoy y el último workout registrado
@@ -735,16 +776,12 @@ let logState = {
 function startWorkoutFromRoutine() {
   const dow = getDayOfWeek();
   const dayData = WEEKLY_ROUTINE[dow];
-  logState = { date: today(), muscleGroups: [...(dayData?.groups || [])], exercises: [], notes: '' };
-  // Pre-cargar ejercicios de la rutina (solo los principales, sin pausas activas)
-  if (dayData) {
-    dayData.exercises.filter(e => !e.pause).forEach(e => {
-      const sets = [];
-      const n = e.sets || 3;
-      for (let i = 0; i < n; i++) sets.push({ reps: '', weight: '', done: false });
-      logState.exercises.push({ id: uid(), name: e.name, sets });
-    });
-  }
+  logState = {
+    date: today(),
+    muscleGroups: [...(dayData?.groups || [])],
+    exercises: getExercisesWithDefaults(), // Auto-fill con programa y último peso
+    notes: ''
+  };
   navigate('log');
 }
 
@@ -758,8 +795,25 @@ function renderLog() {
 
   const exsHTML = logState.exercises.map((ex, ei) => renderExBlock(ex, ei)).join('');
 
+  // Progreso hacia la meta
+  const semanasCompletadas = getProgressWeeks();
+  const progPct = Math.round((semanasCompletadas / GOAL_WEEKS) * 100);
+  const progressHTML = `
+    <div class="card" style="border-left:4px solid var(--accent)">
+      <div class="card-title"><span class="dot" style="background:var(--accent)"></span>Progreso hacia la meta</div>
+      <div class="prog-wrap" style="margin-bottom:12px">
+        <div class="prog-bar"><div class="prog-fill" style="width:${progPct}%"></div></div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);text-align:center">
+        <strong>${semanasCompletadas}/${GOAL_WEEKS}</strong> semanas completadas · <strong>${progPct}%</strong> completado
+      </div>
+    </div>
+  `;
+
   page.innerHTML = `
     <h2>Registrar entrenamiento</h2>
+
+    ${progressHTML}
 
     <div class="card">
       <div class="form-group">
