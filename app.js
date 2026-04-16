@@ -29,6 +29,70 @@ const EXERCISE_DB = {
   'Full Body':   ['Peso muerto', 'Clean and press', 'Thruster', 'Burpee con mancuernas', 'Sentadilla + press'],
 };
 
+
+// ─── RUTINAS DE SÁBADO (rotativas) ───────────────
+const SATURDAY_ROUTINES = [
+  { // Semana 1, 5, 9, 13, 17, 21 (cada 4 semanas)
+    label: 'SÁBADO — GLÚTEOS EXTRA 🍑',
+    emoji: '🍑',
+    groups: ['Glúteos', 'Piernas'],
+    note: 'Enfoque en crecimiento de glúteos. Post-entrenamiento: proteína + carbos.',
+    exercises: [
+      { name: 'Hip thrust con barra (pausado)', sets: 4, reps: '12-15', key: true },
+      { name: 'Prensa de piernas (pie alto)', sets: 4, reps: '12-15', key: true },
+      { name: 'Leg press lateral (abductor)', sets: 3, reps: '15', key: true },
+      { name: 'Extensión de cuádriceps en máquina', sets: 3, reps: '15' },
+      { name: 'Patada de glúteo en polea (high reps)', sets: 3, reps: '20 c/lado' },
+      { name: '★ Glute bridge isométrico 3×30s (pausa activa)', sets: null, reps: null, pause: true },
+    ]
+  },
+  { // Semana 2, 6, 10, 14, 18, 22
+    label: 'SÁBADO — BRAZOS 💪',
+    emoji: '💪',
+    groups: ['Bíceps', 'Tríceps'],
+    note: 'Aislamiento y pump. Brazos grandes = proporción en ectomorfo.',
+    exercises: [
+      { name: 'Curl con barra', sets: 4, reps: '8-10', key: true },
+      { name: 'Curl martillo con mancuernas', sets: 3, reps: '10-12' },
+      { name: 'Curl concentrado', sets: 3, reps: '12' },
+      { name: 'Press francés (EZ bar)', sets: 4, reps: '10-12', key: true },
+      { name: 'Pushdown en polea con cuerda', sets: 3, reps: '12-15' },
+      { name: 'Extensión de tríceps con mancuerna (detrás cabeza)', sets: 3, reps: '12' },
+      { name: '★ Plancha 3×30s (pausa activa)', sets: null, reps: null, pause: true },
+    ]
+  },
+  { // Semana 3, 7, 11, 15, 19, 23
+    label: 'SÁBADO — ESPALDA 🏋️',
+    emoji: '🏋️',
+    groups: ['Espalda', 'Core'],
+    note: 'Espalda ancha y fuerte. Complemento de la semana.',
+    exercises: [
+      { name: 'Dominadas (o jalón asistido)', sets: 4, reps: '6-8', key: true },
+      { name: 'Remo en máquina', sets: 4, reps: '10-12', key: true },
+      { name: 'Remo en polea baja unilateral', sets: 3, reps: '10 c/lado' },
+      { name: 'Pullover con mancuerna', sets: 3, reps: '12' },
+      { name: 'Remo horizontal en máquina Smith', sets: 3, reps: '12' },
+      { name: 'Encogimientos con barra', sets: 3, reps: '12-15' },
+      { name: '★ Dead bug 3×10 c/lado (pausa activa)', sets: null, reps: null, pause: true },
+    ]
+  },
+  { // Semana 4, 8, 12, 16, 20, 24
+    label: 'SÁBADO — RECUPERACIÓN ACTIVA 🧘',
+    emoji: '🧘',
+    groups: ['Full Body'],
+    note: 'El músculo crece en el descanso. Movilidad, stretching, cardio ligero.',
+    exercises: [
+      { name: 'Caminar 30-40 min (ritmo conversacional)', sets: 1, reps: '30-40 min', key: true },
+      { name: 'Stretching dinámico (10 min)', sets: 1, reps: '10 min' },
+      { name: 'Movilidad de cadera (90/90, pigeon, etc)', sets: 1, reps: '10 min' },
+      { name: 'Abdominales: Crunch 3×15', sets: 3, reps: '15' },
+      { name: 'Plancha frontal 3×40s', sets: 3, reps: '40s' },
+      { name: 'Stretching estático (20 min)', sets: 1, reps: '20 min' },
+    ]
+  }
+];
+
+
 const MUSCLE_GROUPS = Object.keys(EXERCISE_DB);
 
 // ─── RUTINA SEMANAL ───────────────────────────
@@ -553,6 +617,14 @@ function getExercisesWithDefaults() {
     });
 }
 
+
+function getSaturdayRoutine() {
+  const weeks = getProgressWeeks();
+  const saturdayIndex = weeks % 4; // 0-3 (rota cada 4 semanas)
+  return SATURDAY_ROUTINES[saturdayIndex];
+}
+
+
 function getProgressWeeks() {
   const start = new Date(START_DATE + 'T00:00:00');
   // Usar la fecha más reciente entre hoy y el último workout registrado
@@ -631,6 +703,8 @@ function renderDash() {
   const dateStr = `${days[now.getDay()]}, ${now.getDate()} de ${months[now.getMonth()]}`;
 
   let todayHTML = '';
+  // Sábado usa rutina rotativa, otros días usan WEEKLY_ROUTINE
+  if (dow === 6) dayData = getSaturdayRoutine();
   if (dayData && dayData.exercises.length) {
     const mainExs = dayData.exercises.filter(e => !e.pause).slice(0, 4);
     todayHTML = `
@@ -788,7 +862,9 @@ let logState = {
 
 function startWorkoutFromRoutine() {
   const dow = getDayOfWeek();
-  const dayData = WEEKLY_ROUTINE[dow];
+  let dayData = WEEKLY_ROUTINE[dow];
+  // Sábado usa rutina rotativa
+  if (dow === 6) dayData = getSaturdayRoutine();
   const exercises = getExercisesWithDefaults();
   
   if (exercises.length > 0) {
