@@ -853,7 +853,7 @@ function renderExBlock(ex, ei) {
   const setsHTML = ex.sets.map((set, si) => `
     <div class="sets-grid" style="margin-bottom:6px">
       <div class="set-num">${si + 1}</div>
-      <input type="number" class="set-input" placeholder="Reps" value="${set.reps}"
+      <input type="text" class="set-input" placeholder="Reps" value="${set.reps}"
         oninput="updateSet(${ei},${si},'reps',this.value)" inputmode="decimal" min="0">
       <input type="number" class="set-input" placeholder="Kg" value="${set.weight}"
         oninput="updateSet(${ei},${si},'weight',this.value)" inputmode="decimal" min="0" step="0.5">
@@ -912,7 +912,7 @@ function toggleSetDone(ei, si) {
     if (setsDiv) setsDiv.innerHTML = logState.exercises[ei].sets.map((set, si2) => `
       <div class="sets-grid" style="margin-bottom:6px">
         <div class="set-num">${si2 + 1}</div>
-        <input type="number" class="set-input" placeholder="Reps" value="${set.reps}"
+        <input type="text" class="set-input" placeholder="Reps" value="${set.reps}"
           oninput="updateSet(${ei},${si2},'reps',this.value)" inputmode="decimal" min="0">
         <input type="number" class="set-input" placeholder="Kg" value="${set.weight}"
           oninput="updateSet(${ei},${si2},'weight',this.value)" inputmode="decimal" min="0" step="0.5">
@@ -933,7 +933,7 @@ function addSet(ei) {
   if (setsDiv) setsDiv.innerHTML = logState.exercises[ei].sets.map((set, si) => `
     <div class="sets-grid" style="margin-bottom:6px">
       <div class="set-num">${si + 1}</div>
-      <input type="number" class="set-input" placeholder="Reps" value="${set.reps}"
+      <input type="text" class="set-input" placeholder="Reps" value="${set.reps}"
         oninput="updateSet(${ei},${si},'reps',this.value)" inputmode="decimal" min="0">
       <input type="number" class="set-input" placeholder="Kg" value="${set.weight}"
         oninput="updateSet(${ei},${si},'weight',this.value)" inputmode="decimal" min="0" step="0.5">
