@@ -777,7 +777,7 @@ function startWorkoutFromRoutine() {
   const dow = getDayOfWeek();
   const dayData = WEEKLY_ROUTINE[dow];
   const exercises = getExercisesWithDefaults();
-  alert('🔍 startWorkout: dow=' + dow + ', exercises=' + exercises.length); console.log('DEBUG:', {dow, hasData: !!dayData, exerciseCount: exercises.length});
+  const debugSet = exercises.length > 0 ? exercises[0].sets[0] : null; alert('exercises=' + exercises.length + '\nEx1: ' + (exercises[0]?.name || 'none') + '\nSet1 reps: ' + JSON.stringify(debugSet?.reps) + '\nSet1 weight: ' + JSON.stringify(debugSet?.weight));
   if (exercises.length > 0) {
     console.log('  Ex1:', exercises[0].name, exercises[0].sets[0]);
   }
