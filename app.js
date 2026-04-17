@@ -345,7 +345,7 @@ function toast(msg, type = '') {
 // ─── DASHBOARD ────────────────────────────────
 function renderDash() {
   const dow = getDayOfWeek();
-  const dayData = WEEKLY_ROUTINE[dow];
+  let dayData = WEEKLY_ROUTINE[dow];
   const streak = getStreak();
   const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
 
