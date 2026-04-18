@@ -96,79 +96,75 @@ const MUSCLE_GROUPS = Object.keys(EXERCISE_DB);
 
 // ─── RUTINA SEMANAL ───────────────────────────
 const WEEKLY_ROUTINE = {
-  1: { // Lunes
+  1: { // Lunes ~55 min
     label: 'PECHO + TRÍCEPS',
     emoji: '💪',
     groups: ['Pecho', 'Tríceps'],
-    note: 'Post-fútbol. Sin piernas. Carga seria desde el minuto uno.',
+    note: 'Post-fútbol. ~55 min. Pesado en press, tríceps al final.',
     exercises: [
       { name: 'Press de banca', sets: 4, reps: '6-8', key: true },
-      { name: 'Press inclinado con mancuernas', sets: 4, reps: '8-10' },
-      { name: 'Aperturas con mancuernas', sets: 3, reps: '12-15' },
+      { name: 'Press inclinado con mancuernas', sets: 3, reps: '8-10' },
       { name: 'Fondos en paralelas', sets: 3, reps: 'Máx' },
       { name: 'Superserie: Press francés + Pushdown', sets: 3, reps: '10+12' },
+      { name: 'Abductor en máquina', sets: 2, reps: '15', key: true },
       { name: '★ Crunch con peso 3×15 (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
-  2: { // Martes
+  2: { // Martes ~55 min
     label: 'ESPALDA + BÍCEPS',
     emoji: '🏋️',
     groups: ['Espalda', 'Bíceps'],
-    note: 'Espalda ancha = V invertida. Dominadas lastradas si podés. Pesado.',
+    note: 'Espalda ancha = V invertida. ~55 min. Dominadas como ejercicio rey.',
     exercises: [
       { name: 'Dominadas (lastradas si podés)', sets: 4, reps: 'Máx', key: true },
       { name: 'Remo con barra', sets: 4, reps: '6-8', key: true },
       { name: 'Remo con mancuerna unilateral', sets: 3, reps: '10 c/lado' },
-      { name: 'Pullover con mancuerna', sets: 3, reps: '12' },
       { name: 'Curl con barra', sets: 3, reps: '8-10' },
       { name: 'Curl martillo', sets: 3, reps: '10' },
       { name: '★ Plancha 3×40s (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
-  3: { // Miércoles
+  3: { // Miércoles ~55 min
     label: 'HOMBROS + CORE',
     emoji: '🎯',
     groups: ['Hombros', 'Core'],
-    note: 'Post-fútbol. Press pesado + laterales controladas. Hombros de bestia.',
+    note: 'Post-fútbol. ~55 min. Press pesado + laterales + toque glúteos al final.',
     exercises: [
       { name: 'Press militar con barra', sets: 4, reps: '6-8', key: true },
       { name: 'Elevaciones laterales', sets: 4, reps: '12-15' },
-      { name: 'Elevaciones frontales con disco', sets: 3, reps: '12' },
       { name: 'Pájaro (deltoides posterior)', sets: 3, reps: '15' },
       { name: 'Face pulls en polea', sets: 3, reps: '15' },
-      { name: 'Encogimientos con barra', sets: 3, reps: '12' },
+      { name: 'Patada de glúteo en polea', sets: 2, reps: '15 c/lado', key: true },
       { name: '★ Russian twist con disco 3×20 (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
-  4: { // Jueves
-    label: '🔥 PIERNAS + GLÚTEOS',
+  4: { // Jueves ~70 min
+    label: 'PIERNAS + GLÚTEOS',
     emoji: '🔥',
     groups: ['Piernas', 'Glúteos'],
-    note: '28 años sin glúteos terminan HOY. Hip thrust PESADO. Sentadilla PROFUNDA. Patada en polea para rematar.',
+    note: 'El día más importante. ~70 min. Glúteos y piernas al límite.',
     exercises: [
       { name: 'Sentadilla con barra (profunda)', sets: 4, reps: '6-8', key: true },
       { name: 'Hip thrust con barra (pausa 2s arriba)', sets: 4, reps: '10-12', key: true },
-      { name: 'Sentadilla búlgara', sets: 3, reps: '10 c/lado' },
       { name: 'Peso muerto rumano', sets: 4, reps: '8-10', key: true },
+      { name: 'Sentadilla búlgara', sets: 3, reps: '10 c/lado' },
       { name: 'Abductor en máquina (peso alto)', sets: 3, reps: '15', key: true },
-      { name: 'Patada de glúteo en polea (extensión completa)', sets: 3, reps: '12 c/lado', key: true },
-      { name: 'Curl de isquiotibiales', sets: 3, reps: '12' },
-      { name: 'Elevación de talones', sets: 4, reps: '20' },
+      { name: 'Patada de glúteo en polea', sets: 3, reps: '12 c/lado', key: true },
+      { name: 'Elevación de talones', sets: 3, reps: '20' },
       { name: '★ Elevación de piernas colgado 3×12 (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
-  5: { // Viernes
-    label: 'FULL BODY + TOQUE GLÚTEOS',
+  5: { // Viernes ~55 min
+    label: 'FULL BODY',
     emoji: '⚡',
     groups: ['Full Body', 'Glúteos'],
-    note: 'Full body real. Solo 2 ejercicios de glúteos de aislamiento para no solapar con el jueves.',
+    note: 'Post-5k. ~55 min. Movimientos grandes + toque de glúteos.',
     exercises: [
       { name: 'Peso muerto convencional', sets: 4, reps: '5', key: true },
-      { name: 'Dominadas', sets: 4, reps: 'Máx', key: true },
-      { name: 'Press de banca (variante del lunes)', sets: 3, reps: '8-10' },
-      { name: 'Superserie: Remo en polea + Curl mancuernas', sets: 3, reps: '10+10' },
-      { name: 'Patada de glúteo en polea', sets: 3, reps: '15 c/lado', key: true },
-      { name: 'Abductor en máquina', sets: 3, reps: '15', key: true },
+      { name: 'Dominadas', sets: 3, reps: 'Máx', key: true },
+      { name: 'Press de banca', sets: 3, reps: '8-10' },
+      { name: 'Remo con mancuerna unilateral', sets: 3, reps: '10 c/lado' },
+      { name: 'Hip thrust con barra (liviano, squeeze)', sets: 3, reps: '15', key: true },
       { name: '★ Rueda abdominal 3×12 (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
