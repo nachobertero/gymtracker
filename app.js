@@ -30,47 +30,49 @@ const EXERCISE_DB = {
 };
 
 
-// ─── RUTINAS DE SÁBADO (rotativas) ───────────────
+// ─── RUTINAS DE SÁBADO (rotativas, opcionales) ───────────────
 const SATURDAY_ROUTINES = [
   {
-    label: 'SÁBADO — PECHO + GLÚTEOS',
+    label: 'SÁBADO — PECHO COMPLETO',
     emoji: '💪',
-    groups: ['Pecho', 'Glúteos'],
-    note: 'Tren superior + estímulo de glúteos. Completa el trabajo de la semana.',
+    groups: ['Pecho', 'Tríceps'],
+    note: 'Sesión optativa. Pecho desde todos los ángulos + tríceps. Sin piernas.',
     exercises: [
-      { name: 'Press de banca o inclinado (variante)', sets: 4, reps: '8-10', key: true },
+      { name: 'Press de banca', sets: 4, reps: '8-10', key: true },
+      { name: 'Press inclinado con mancuernas', sets: 3, reps: '10-12' },
+      { name: 'Press declinado', sets: 3, reps: '10-12' },
       { name: 'Aperturas con mancuernas', sets: 3, reps: '12-15' },
-      { name: 'Hip thrust con barra (pausado)', sets: 3, reps: '12-15', key: true },
-      { name: 'Patada de glúteo en polea', sets: 3, reps: '15 c/lado', key: true },
-      { name: 'Fondos en paralelas', sets: 3, reps: '10-12' },
-      { name: '★ Glute bridge isométrico 3x30s', sets: null, reps: null, pause: true },
+      { name: 'Press cerrado en Smith (rechazo)', sets: 3, reps: '10-12', key: true },
+      { name: 'Pushdown en polea con cuerda', sets: 3, reps: '12-15' },
+      { name: '★ Plancha 3x40s', sets: null, reps: null, pause: true },
     ]
   },
   {
-    label: 'SÁBADO — BRAZOS + GLÚTEOS',
+    label: 'SÁBADO — BRAZOS',
     emoji: '💪',
-    groups: ['Bíceps', 'Tríceps', 'Glúteos'],
-    note: 'Aislamiento de brazos + trabajo ligero de glúteos.',
+    groups: ['Bíceps', 'Tríceps'],
+    note: 'Sesión optativa. Aislamiento total de brazos. Pump garantizado.',
     exercises: [
       { name: 'Curl con barra', sets: 4, reps: '8-10', key: true },
       { name: 'Curl martillo con mancuernas', sets: 3, reps: '10-12' },
+      { name: 'Curl concentrado', sets: 3, reps: '12 c/lado' },
       { name: 'Press francés (EZ bar)', sets: 4, reps: '10-12', key: true },
+      { name: 'Press cerrado en Smith (rechazo)', sets: 3, reps: '10-12', key: true },
       { name: 'Pushdown en polea con cuerda', sets: 3, reps: '12-15' },
-      { name: 'Abductor en máquina', sets: 3, reps: '15' },
       { name: '★ Plancha 3x30s', sets: null, reps: null, pause: true },
     ]
   },
   {
-    label: 'SÁBADO — ESPALDA + GLÚTEOS',
+    label: 'SÁBADO — ESPALDA',
     emoji: '🏋️',
-    groups: ['Espalda', 'Glúteos'],
-    note: 'Espalda ancha + estímulo específico de glúteos.',
+    groups: ['Espalda'],
+    note: 'Sesión optativa. Espalda ancha y gruesa. Sin piernas.',
     exercises: [
       { name: 'Dominadas (o jalón asistido)', sets: 4, reps: '6-8', key: true },
-      { name: 'Remo en máquina', sets: 4, reps: '10-12', key: true },
-      { name: 'Peso muerto rumano ligero', sets: 3, reps: '10-12', key: true },
+      { name: 'Remo con barra', sets: 4, reps: '8-10', key: true },
+      { name: 'Remo en máquina', sets: 3, reps: '10-12' },
       { name: 'Remo en polea baja unilateral', sets: 3, reps: '10 c/lado' },
-      { name: 'Patada de glúteo en polea (high reps)', sets: 3, reps: '15 c/lado', key: true },
+      { name: 'Pullover con mancuerna', sets: 3, reps: '12' },
       { name: '★ Dead bug 3x10 c/lado', sets: null, reps: null, pause: true },
     ]
   },
@@ -78,7 +80,7 @@ const SATURDAY_ROUTINES = [
     label: 'SÁBADO — RECUPERACIÓN ACTIVA',
     emoji: '🧘',
     groups: ['Full Body'],
-    note: 'El músculo crece en el descanso. Movilidad y stretching.',
+    note: 'Sesión optativa. El músculo crece descansando. Movilidad y stretching.',
     exercises: [
       { name: 'Caminata 30-40 min (ritmo suave)', sets: 1, reps: '30-40 min', key: true },
       { name: 'Movilidad de cadera (90/90, pigeon)', sets: 1, reps: '10 min' },
@@ -538,6 +540,9 @@ function getStreak() {
   const t = new Date(); t.setHours(0, 0, 0, 0);
   for (let i = 0; i < 60; i++) {
     const d = new Date(t); d.setDate(t.getDate() - i);
+    const dow = d.getDay();
+    // Sábado (6) y domingo (0) son opcionales — no rompen la racha
+    if (dow === 0 || dow === 6) continue;
     const ds = d.toISOString().split('T')[0];
     if (sorted.find(w => w.date === ds)) streak++;
     else if (i > 0) break;
@@ -1378,6 +1383,28 @@ function getISOWeek(d) {
 }
 
 // ─── PROGRAMA ─────────────────────────────────
+function buildSaturdayHTML(labels) {
+  let html = '<div style="margin-top:20px"><h3 style="margin-bottom:12px;font-size:16px;color:var(--accent-l)">📅 Sábados rotativos (opcionales)</h3>';
+  SATURDAY_ROUTINES.forEach((r, i) => {
+    let exRows = '';
+    r.exercises.forEach(e => {
+      exRows += '<div class="rex' + (e.key ? ' key' : '') + (e.pause ? ' pause' : '') + '">' +
+        '<span class="rex-name">' + e.name + '</span>' +
+        (e.sets && e.reps ? '<span class="rex-spec">' + e.sets + '×' + e.reps + '</span>' : '') +
+        '</div>';
+    });
+    html += '<div class="rday" style="margin-bottom:8px">' +
+      '<div class="rday-head" onclick="toggleRDay(&quot;sat-' + i + '&quot;)">' +
+      '<div class="rday-left"><span class="rday-emoji">' + r.emoji + '</span>' +
+      '<div><div class="rday-name">' + labels[i] + '</div>' +
+      '<div class="rday-muscle">' + r.label + '</div></div></div>' +
+      '<span class="rday-arrow" id="arr-sat-' + i + '">▼</span></div>' +
+      '<div class="rday-body" id="rday-sat-' + i + '">' +
+      '<div class="rday-note">' + r.note + '</div>' + exRows + '</div></div>';
+  });
+  return html + '</div>';
+}
+
 function renderProg() {
   const page = document.getElementById('page-prog');
 
@@ -1417,37 +1444,10 @@ function renderProg() {
 
   // Sección Sábados rotativos
   const saturdayLabels = ['Sem 1,5,9…', 'Sem 2,6,10…', 'Sem 3,7,11…', 'Sem 4,8,12…'];
-  const saturdayHTML = `
-    <div style="margin-top:20px">
-      <h3 style="margin-bottom:12px;font-size:16px;color:var(--accent-l)">📅 Sábados rotativos</h3>
-      ${SATURDAY_ROUTINES.map((r, i) => `
-        <div class="rday" style="margin-bottom:8px">
-          <div class="rday-head" onclick="toggleRDay('sat-${i}')">
-            <div class="rday-left">
-              <span class="rday-emoji">${r.emoji}</span>
-              <div>
-                <div class="rday-name">${saturdayLabels[i]}</div>
-                <div class="rday-muscle">${r.label}</div>
-              </div>
-            </div>
-            <span class="rday-arrow" id="arr-sat-${i}">▼</span>
-          </div>
-          <div class="rday-body" id="rday-sat-${i}">
-            <div class="rday-note">${r.note}</div>
-            ${r.exercises.map(e => `
-              <div class="rex${e.key ? ' key' : ''}${e.pause ? ' pause' : ''}">
-                <span class="rex-name">${e.name}</span>
-                ${e.sets && e.reps ? `<span class="rex-spec">${e.sets}×${e.reps}</span>` : ''}
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `).join('')}
-    </div>
-  \`;
+  const saturdayHTML = buildSaturdayHTML(saturdayLabels);
 
   // Nutrition section
-  const nutriHTML = \`
+  const nutriHTML = `
     <div class="card mt14">
       <div class="card-title"><span class="dot" style="background:var(--success)"></span>Nutrición · ${NUTRITION.goal}</div>
       <table class="nutr-table">
