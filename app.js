@@ -21,7 +21,7 @@ const EXERCISE_DB = {
   'Espalda':     ['Dominadas', 'Jalón al pecho', 'Remo con barra', 'Remo con mancuerna', 'Remo en máquina', 'Peso muerto', 'Remo en polea', 'Pullover con mancuerna'],
   'Hombros':     ['Press militar con barra', 'Press Arnold', 'Elevaciones laterales', 'Elevaciones frontales', 'Pájaro', 'Face pulls en polea', 'Encogimientos'],
   'Bíceps':      ['Curl con barra', 'Curl con mancuernas alternado', 'Curl martillo', 'Curl concentrado', 'Curl en polea', 'Curl Scott'],
-  'Tríceps':     ['Press francés', 'Extensión de tríceps en polea', 'Fondos en paralelas', 'Pushdown con cuerda', 'Kickback', 'Press cerrado en banca'],
+  'Tríceps':     ['Press francés', 'Extensión de tríceps en polea', 'Fondos en paralelas', 'Pushdown con cuerda', 'Kickback', 'Press cerrado en banca', 'Press cerrado en Smith (rechazo)'],
   'Piernas':     ['Sentadilla con barra', 'Prensa de piernas', 'Extensión de cuádriceps', 'Curl de isquiotibiales', 'Sentadilla búlgara', 'Zancadas con mancuernas', 'Elevación de talones', 'Hack squat'],
   'Glúteos':     ['Hip thrust con barra', 'Peso muerto rumano', 'Sentadilla sumo', 'Abductor en máquina', 'Patada de glúteo en polea', 'Zancadas inversas', 'Step up'],
   'Abdominales': ['Crunch', 'Crunch en polea', 'Elevación de piernas', 'Russian twist', 'Rueda abdominal', 'Plancha', 'Oblicuos con mancuerna'],
@@ -156,18 +156,17 @@ const WEEKLY_ROUTINE = {
     ]
   },
   5: { // Viernes
-    label: 'FULL BODY + GLÚTEOS',
+    label: 'FULL BODY + TOQUE GLÚTEOS',
     emoji: '⚡',
     groups: ['Full Body', 'Glúteos'],
-    note: '2do estímulo de glúteos en la semana. Los grupos rezagados necesitan frecuencia 2×/sem mínimo.',
+    note: 'Full body real. Solo 2 ejercicios de glúteos de aislamiento para no solapar con el jueves.',
     exercises: [
       { name: 'Peso muerto convencional', sets: 4, reps: '5', key: true },
-      { name: 'Hip thrust (más liviano, 15 reps, squeeze arriba)', sets: 3, reps: '15', key: true },
-      { name: 'Press militar con barra', sets: 3, reps: '8' },
-      { name: 'Dominadas', sets: 3, reps: 'Máx' },
-      { name: 'Sentadilla goblet profunda', sets: 3, reps: '12' },
-      { name: 'Patada de glúteo en polea', sets: 3, reps: '15 c/lado', key: true },
+      { name: 'Dominadas', sets: 4, reps: 'Máx', key: true },
+      { name: 'Press de banca (variante del lunes)', sets: 3, reps: '8-10' },
       { name: 'Superserie: Remo en polea + Curl mancuernas', sets: 3, reps: '10+10' },
+      { name: 'Patada de glúteo en polea', sets: 3, reps: '15 c/lado', key: true },
+      { name: 'Abductor en máquina', sets: 3, reps: '15', key: true },
       { name: '★ Rueda abdominal 3×12 (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
@@ -944,6 +943,7 @@ function renderExBlock(ex, ei) {
       <button class="set-done${set.done ? ' checked' : ''}" onclick="toggleSetDone(${ei},${si})">
         ${set.done ? '✓' : '○'}
       </button>
+      <button style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:0 4px;line-height:1" onclick="removeSet(${ei},${si})" title="Eliminar serie">✕</button>
     </div>
   `).join('');
 
@@ -1024,6 +1024,28 @@ function addSet(ei) {
       <button class="set-done${set.done ? ' checked' : ''}" onclick="toggleSetDone(${ei},${si})">
         ${set.done ? '✓' : '○'}
       </button>
+      <button style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:0 4px;line-height:1" onclick="removeSet(${ei},${si})" title="Eliminar serie">✕</button>
+    </div>
+  `).join('');
+}
+
+
+function removeSet(ei, si) {
+  if (!logState.exercises[ei]) return;
+  if (logState.exercises[ei].sets.length <= 1) return; // mínimo 1 serie
+  logState.exercises[ei].sets.splice(si, 1);
+  const setsDiv = document.getElementById(`sets-${ei}`);
+  if (setsDiv) setsDiv.innerHTML = logState.exercises[ei].sets.map((set, si2) => `
+    <div class="sets-grid" style="margin-bottom:6px">
+      <div class="set-num">${si2 + 1}</div>
+      <input type="text" class="set-input" placeholder="Reps" value="${set.reps}"
+        oninput="updateSet(${ei},${si2},'reps',this.value)" inputmode="decimal">
+      <input type="number" class="set-input" placeholder="Kg" value="${set.weight}"
+        oninput="updateSet(${ei},${si2},'weight',this.value)" inputmode="decimal" min="0" step="0.5">
+      <button class="set-done${set.done ? ' checked' : ''}" onclick="toggleSetDone(${ei},${si2})">
+        ${set.done ? '✓' : '○'}
+      </button>
+      <button style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:0 4px;line-height:1" onclick="removeSet(${ei},${si2})" title="Eliminar serie">✕</button>
     </div>
   `).join('');
 }
@@ -1393,8 +1415,39 @@ function renderProg() {
     <div style="height:8px"></div>
   `).join('');
 
+  // Sección Sábados rotativos
+  const saturdayLabels = ['Sem 1,5,9…', 'Sem 2,6,10…', 'Sem 3,7,11…', 'Sem 4,8,12…'];
+  const saturdayHTML = `
+    <div style="margin-top:20px">
+      <h3 style="margin-bottom:12px;font-size:16px;color:var(--accent-l)">📅 Sábados rotativos</h3>
+      ${SATURDAY_ROUTINES.map((r, i) => `
+        <div class="rday" style="margin-bottom:8px">
+          <div class="rday-head" onclick="toggleRDay('sat-${i}')">
+            <div class="rday-left">
+              <span class="rday-emoji">${r.emoji}</span>
+              <div>
+                <div class="rday-name">${saturdayLabels[i]}</div>
+                <div class="rday-muscle">${r.label}</div>
+              </div>
+            </div>
+            <span class="rday-arrow" id="arr-sat-${i}">▼</span>
+          </div>
+          <div class="rday-body" id="rday-sat-${i}">
+            <div class="rday-note">${r.note}</div>
+            ${r.exercises.map(e => `
+              <div class="rex${e.key ? ' key' : ''}${e.pause ? ' pause' : ''}">
+                <span class="rex-name">${e.name}</span>
+                ${e.sets && e.reps ? `<span class="rex-spec">${e.sets}×${e.reps}</span>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  \`;
+
   // Nutrition section
-  const nutriHTML = `
+  const nutriHTML = \`
     <div class="card mt14">
       <div class="card-title"><span class="dot" style="background:var(--success)"></span>Nutrición · ${NUTRITION.goal}</div>
       <table class="nutr-table">
@@ -1432,6 +1485,7 @@ function renderProg() {
   page.innerHTML = `
     <h2>Programa 6 meses</h2>
     ${phasesHTML}
+    ${saturdayHTML}
     <h2 style="margin-top:8px">Nutrición</h2>
     ${nutriHTML}
   `;
