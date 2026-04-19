@@ -100,7 +100,7 @@ const WEEKLY_ROUTINE = {
     label: 'PECHO + TRÍCEPS',
     emoji: '💪',
     groups: ['Pecho', 'Tríceps'],
-    note: 'Post-fútbol. ~55 min. Press muy pesado (Mentzer), tríceps al final.',
+    note: 'Pre-fútbol. ~55 min. Press muy pesado (Mentzer), tríceps al final.',
     exercises: [
       { name: 'Press de banca', sets: 4, reps: '4-6', key: true },
       { name: 'Press inclinado con mancuernas', sets: 3, reps: '8-10' },
@@ -128,7 +128,7 @@ const WEEKLY_ROUTINE = {
     label: 'HOMBROS + CORE',
     emoji: '🎯',
     groups: ['Hombros', 'Core'],
-    note: 'Post-fútbol. ~55 min. Press militar pesado (Mentzer) + aislamiento.',
+    note: 'Pre-fútbol. ~55 min. Press militar pesado (Mentzer) + aislamiento.',
     exercises: [
       { name: 'Press militar con barra', sets: 4, reps: '5-7', key: true },
       { name: 'Elevaciones laterales', sets: 4, reps: '12-15' },
