@@ -96,16 +96,18 @@ const MUSCLE_GROUPS = Object.keys(EXERCISE_DB);
 
 // ─── RUTINA SEMANAL ───────────────────────────
 const WEEKLY_ROUTINE = {
-  1: { // Lunes ~55 min
+  1: { // Lunes ~65 min
     label: 'PECHO + TRÍCEPS',
     emoji: '💪',
     groups: ['Pecho', 'Tríceps'],
-    note: 'Pre-fútbol. ~55 min. Press muy pesado (Mentzer), tríceps al final.',
+    note: 'Pre-fútbol. ~65 min. Press pesado + tríceps completo por las 3 cabezas.',
     exercises: [
       { name: 'Press de banca', sets: 4, reps: '4-6', key: true },
       { name: 'Press inclinado con mancuernas', sets: 3, reps: '8-10' },
       { name: 'Fondos en paralelas', sets: 3, reps: 'Máx' },
-      { name: 'Superserie: Press francés + Pushdown', sets: 3, reps: '10+12' },
+      { name: 'Press cerrado en Smith (rechazo)', sets: 3, reps: '6-8', key: true },
+      { name: 'Press francés (barra EZ)', sets: 3, reps: '8-10', key: true },
+      { name: 'Pushdown en polea con cuerda', sets: 3, reps: '12' },
       { name: 'Abductor en máquina', sets: 2, reps: '15', key: true },
       { name: '★ Crunch con peso 3×15 (pausa activa)', sets: null, reps: null, pause: true },
     ]
@@ -154,16 +156,17 @@ const WEEKLY_ROUTINE = {
       { name: '★ Elevación de piernas colgado 3×12 (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
-  5: { // Viernes ~55 min
+  5: { // Viernes ~60 min
     label: 'FULL BODY',
     emoji: '⚡',
     groups: ['Full Body', 'Glúteos'],
-    note: 'Post-5k. ~55 min. Peso muerto máximo (Mentzer) + tren superior + glúteos.',
+    note: 'Post-5k. ~60 min. Peso muerto máximo (Mentzer) + tren superior + glúteos.',
     exercises: [
       { name: 'Peso muerto convencional', sets: 3, reps: '3-5', key: true },
       { name: 'Dominadas', sets: 3, reps: 'Máx', key: true },
       { name: 'Press de banca', sets: 3, reps: '6-8' },
       { name: 'Remo con mancuerna unilateral', sets: 3, reps: '10 c/lado' },
+      { name: 'Extensión de tríceps en polea (overhead)', sets: 3, reps: '10', key: true },
       { name: 'Hip thrust con barra (liviano, squeeze)', sets: 3, reps: '15', key: true },
       { name: '★ Rueda abdominal 3×12 (pausa activa)', sets: null, reps: null, pause: true },
     ]
