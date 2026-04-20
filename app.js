@@ -100,15 +100,14 @@ const WEEKLY_ROUTINE = {
     label: 'PECHO + TRÍCEPS',
     emoji: '💪',
     groups: ['Pecho', 'Tríceps'],
-    note: 'Pre-fútbol. ~65 min. Press pesado (Mentzer) + tríceps full (3 cabezas).',
+    note: 'Pre-fútbol. ~65 min. Press pesado (Mentzer) + tríceps completo.',
     exercises: [
       { name: 'Press de banca', sets: 4, reps: '4-6', key: true },
       { name: 'Press inclinado con mancuernas', sets: 3, reps: '8-10' },
-      { name: 'Máquina de pecho', sets: 3, reps: '10-12' },
+      { name: 'Fondos en paralelas', sets: 3, reps: 'Máx' },
       { name: 'Press cerrado en Smith (rechazo)', sets: 3, reps: '6-8', key: true },
       { name: 'Press francés (barra EZ)', sets: 3, reps: '8-10' },
       { name: 'Pushdown en polea con cuerda', sets: 3, reps: '12' },
-      { name: 'Kickback con mancuerna', sets: 3, reps: '12-15 c/lado', key: true },
       { name: 'Abductor en máquina', sets: 2, reps: '15' },
       { name: '★ Crunch con peso 3×15 (pausa activa)', sets: null, reps: null, pause: true },
     ]
@@ -202,15 +201,14 @@ const PROGRAM = [
     days: [
       {
         day: 'LUNES', label: 'PECHO + TRÍCEPS', emoji: '💪',
-        note: 'Pre-fútbol. Mentzer + tríceps full (3 cabezas: press francés, pushdown, kickback).',
+        note: 'Pre-fútbol. Mentzer + tríceps completo (fondos, press smith, press francés, pushdown).',
         exercises: [
           { name: 'Press de banca', spec: '4×4-6 (Mentzer, busca 85%)', key: true },
           { name: 'Press inclinado con mancuernas', spec: '3×8-10' },
-          { name: 'Máquina de pecho', spec: '3×10-12 (sin estrés muñeca)' },
+          { name: 'Fondos en paralelas', spec: '3×Máx' },
           { name: 'Press cerrado en Smith (rechazo)', spec: '3×6-8', key: true },
           { name: 'Press francés (barra EZ)', spec: '3×8-10' },
           { name: 'Pushdown en polea con cuerda', spec: '3×12' },
-          { name: 'Kickback con mancuerna', spec: '3×12-15 c/lado', key: true },
           { name: 'Abductor en máquina', spec: '2×15' },
           { name: '★ Crunch con peso 3×15 (pausa activa)', spec: '', pause: true },
         ]
@@ -276,15 +274,14 @@ const PROGRAM = [
     days: [
       {
         day: 'LUNES', label: 'PECHO + TRÍCEPS', emoji: '💪',
-        note: 'Press banca: REST-PAUSE en set 4. Tríceps con DROPS estratégicos.',
+        note: 'Press banca: REST-PAUSE en set 4. Fondos + tríceps con DROPS.',
         exercises: [
           { name: 'Press de banca (rest-pause en set 4)', spec: '4×4-6 + rest-pause final', key: true },
           { name: 'Press inclinado con mancuernas', spec: '4×8-10' },
-          { name: 'Máquina de pecho', spec: '3×10-12 + drop set' },
+          { name: 'Fondos en paralelas', spec: '3×Máx + drop set' },
           { name: 'Press cerrado en Smith', spec: '4×6-8 + drop set', key: true },
           { name: 'Press francés (barra EZ)', spec: '3×8-10 + drop set' },
           { name: 'Pushdown en polea con cuerda', spec: '4×12 + drop set' },
-          { name: 'Kickback con mancuerna', spec: '3×12-15 c/lado + drop' },
           { name: 'Abductor en máquina', spec: '2×15' },
           { name: '★ Crunch con peso 3×15 (pausa activa)', spec: '', pause: true },
         ]
@@ -350,15 +347,14 @@ const PROGRAM = [
     days: [
       {
         day: 'LUNES', label: 'PECHO + TRÍCEPS', emoji: '💪',
-        note: 'MÁXIMA INTENSIDAD. Cada set al límite con drops + rest-pause.',
+        note: 'MÁXIMA INTENSIDAD. Cada set al límite. Fondos lastrados con drop.',
         exercises: [
           { name: 'Press de banca (rest-pause sets 3 y 4)', spec: '4×4-6 + rest-pause', key: true },
           { name: 'Press inclinado con mancuernas + drop set', spec: '4×8-10 + drop' },
-          { name: 'Máquina de pecho (last set a fallo con drop)', spec: '4×10-12 + drop set' },
+          { name: 'Fondos lastrados', spec: '4×Máx + drop set' },
           { name: 'Press cerrado en Smith (rest-pause)', spec: '4×6-8 + rest-pause', key: true },
           { name: 'Press francés + drop set x2', spec: '3×8-10 + 2 drops' },
           { name: 'Pushdown en polea + drop set x2', spec: '4×12 + 2 drops' },
-          { name: 'Kickback con mancuerna + drop set', spec: '3×12-15 c/lado + drop' },
           { name: 'Abductor en máquina', spec: '2×15' },
           { name: '★ Crunch con rueda 3×15 (pausa activa)', spec: '', pause: true },
         ]
