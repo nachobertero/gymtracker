@@ -126,17 +126,18 @@ const WEEKLY_ROUTINE = {
       { name: '★ Plancha 3×40s (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
-  3: { // Miércoles ~55 min
+  3: { // Miércoles ~60 min
     label: 'HOMBROS + CORE',
     emoji: '🎯',
     groups: ['Hombros', 'Core'],
-    note: 'Pre-fútbol. ~55 min. Press militar pesado (Mentzer) + aislamiento.',
+    note: 'Pre-fútbol. ~60 min. Press militar pesado (Mentzer) + hombros completos + trapecios.',
     exercises: [
       { name: 'Press militar con barra', sets: 4, reps: '5-7', key: true },
       { name: 'Elevaciones laterales', sets: 4, reps: '12-15' },
       { name: 'Pájaro (deltoides posterior)', sets: 3, reps: '15' },
       { name: 'Face pulls en polea', sets: 3, reps: '15' },
-      { name: 'Patada de glúteo en polea', sets: 2, reps: '15 c/lado', key: true },
+      { name: 'Encogimientos con barra', sets: 3, reps: '12-15', key: true },
+      { name: 'Patada de glúteo en polea', sets: 2, reps: '15 c/lado' },
       { name: '★ Russian twist con disco 3×20 (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
@@ -227,12 +228,13 @@ const PROGRAM = [
       },
       {
         day: 'MIÉRCOLES', label: 'HOMBROS + CORE', emoji: '🎯',
-        note: 'Pre-fútbol. Press militar PESADO. Hombros anchos.',
+        note: 'Pre-fútbol. Press militar PESADO + trapecios anchos.',
         exercises: [
           { name: 'Press militar con barra', spec: '4×5-7 (Mentzer)', key: true },
           { name: 'Elevaciones laterales', spec: '4×12-15' },
           { name: 'Pájaro (deltoides posterior)', spec: '3×15' },
           { name: 'Face pulls en polea', spec: '3×15' },
+          { name: 'Encogimientos con barra', spec: '3×12-15', key: true },
           { name: 'Patada de glúteo en polea', spec: '2×15 c/lado' },
           { name: '★ Russian twist con disco 3×20 (pausa activa)', spec: '', pause: true },
         ]
@@ -300,12 +302,13 @@ const PROGRAM = [
       },
       {
         day: 'MIÉRCOLES', label: 'HOMBROS + CORE', emoji: '🎯',
-        note: 'Press militar: +1 serie. Laterales con DROP SET x2.',
+        note: 'Press militar: +1 serie. Laterales con 2 DROPS. Encogimientos con drop.',
         exercises: [
           { name: 'Press militar con barra', spec: '4×5-7 + drop set', key: true },
           { name: 'Elevaciones laterales', spec: '4×12-15 + 2 drop sets' },
           { name: 'Pájaro (deltoides posterior)', spec: '3×15 + drop set' },
-          { name: 'Face pulls en polea', spec: '3×15' },
+          { name: 'Face pulls en polea', spec: '3×15 + drop set' },
+          { name: 'Encogimientos con barra', spec: '3×12-15 + drop set', key: true },
           { name: 'Patada de glúteo en polea', spec: '2×15 c/lado' },
           { name: '★ Russian twist con disco 3×20 (pausa activa)', spec: '', pause: true },
         ]
@@ -373,12 +376,13 @@ const PROGRAM = [
       },
       {
         day: 'MIÉRCOLES', label: 'HOMBROS + CORE', emoji: '🎯',
-        note: 'Press: rest-pause. Laterales: 3 drop sets. Definición máxima.',
+        note: 'Press: rest-pause. Laterales: 3 drops. Encogimientos: máxima intensidad.',
         exercises: [
           { name: 'Press militar con barra (rest-pause)', spec: '4×5-7 + rest-pause', key: true },
           { name: 'Elevaciones laterales + 3 drop sets', spec: '4×12-15 + 3 drops' },
           { name: 'Pájaro (deltoides posterior) + drop set', spec: '4×15 + drop' },
           { name: 'Face pulls en polea + drop set', spec: '3×15 + drop' },
+          { name: 'Encogimientos con barra + drop set x2', spec: '3×12-15 + 2 drops', key: true },
           { name: 'Patada de glúteo en polea', spec: '2×15 c/lado' },
           { name: '★ Hollow hold 3×30s (pausa activa)', spec: '', pause: true },
         ]
