@@ -116,10 +116,10 @@ const WEEKLY_ROUTINE = {
     label: 'ESPALDA + BÍCEPS',
     emoji: '🏋️',
     groups: ['Espalda', 'Bíceps'],
-    note: 'Espalda ancha = V invertida. ~55 min. Dominadas + remo muy pesado.',
+    note: 'Espalda ancha = V invertida. ~55 min. Dominadas + remo en máquina (carga segura).',
     exercises: [
       { name: 'Dominadas (lastradas si podés)', sets: 4, reps: 'Máx', key: true },
-      { name: 'Remo con barra', sets: 4, reps: '4-6', key: true },
+      { name: 'Remo en máquina', sets: 4, reps: '4-6', key: true },
       { name: 'Remo con mancuerna unilateral', sets: 3, reps: '10 c/lado' },
       { name: 'Curl con barra', sets: 3, reps: '6-8' },
       { name: 'Curl martillo', sets: 3, reps: '10' },
@@ -218,7 +218,7 @@ const PROGRAM = [
         note: 'Dominadas + Remo = espalda COMPLETA. Compuestos pesados.',
         exercises: [
           { name: 'Dominadas (lastradas si podés)', spec: '4×Máx', key: true },
-          { name: 'Remo con barra', spec: '4×4-6 (Mentzer)', key: true },
+          { name: 'Remo en máquina', spec: '4×4-6 (Mentzer, carga segura)', key: true },
           { name: 'Remo con mancuerna unilateral', spec: '3×10 c/lado' },
           { name: 'Curl con barra', spec: '3×6-8' },
           { name: 'Curl martillo', spec: '3×10' },
