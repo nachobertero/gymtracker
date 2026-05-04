@@ -541,7 +541,7 @@ function getStreak() {
   const sorted = [...workouts].sort((a, b) => b.date.localeCompare(a.date));
   let streak = 0;
   const t = new Date(); t.setHours(0, 0, 0, 0);
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 200; i++) { // Aumentado a 200 (suficiente para 24 semanas + buffer)
     const d = new Date(t); d.setDate(t.getDate() - i);
     const dow = d.getDay();
     // Sábado (6) y domingo (0) son opcionales — no rompen la racha
