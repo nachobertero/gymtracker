@@ -597,7 +597,7 @@ function parseMaxReps(repsStr) {
 
 function getExercisesWithDefaults() {
   const dow = getDayOfWeek();
-  const dayData = dow === 6 ? getSaturdayRoutine() : WEEKLY_ROUTINE[dow];
+  const dayData = getPhaseRoutineDay(dow);
   if (!dayData || !dayData.exercises) return [];
 
   return dayData.exercises
@@ -624,6 +624,40 @@ function getExercisesWithDefaults() {
 function getSaturdayRoutine() {
   const weeks = getProgressWeeks();
   return SATURDAY_ROUTINES[weeks % 4];
+}
+
+function getCurrentPhaseIndex() {
+  const weeks = getProgressWeeks();
+  if (weeks < 4) return 0;   // Fase 1: semanas 1-4
+  if (weeks < 12) return 1;  // Fase 2: semanas 5-12
+  return 2;                   // Fase 3: semanas 13-24
+}
+
+function parseSetCount(spec) {
+  if (!spec) return null;
+  const m = spec.match(/^(\d+)[×x]/);
+  return m ? parseInt(m[1]) : null;
+}
+
+// Devuelve el dayData de hoy con sets ajustados a la fase actual
+function getPhaseRoutineDay(dow) {
+  if (dow === 6) return getSaturdayRoutine();
+  const baseDay = WEEKLY_ROUTINE[dow];
+  if (!baseDay) return null;
+
+  const phaseIndex = getCurrentPhaseIndex();
+  const dowToIndex = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 };
+  const phaseDay = PROGRAM[phaseIndex]?.days?.[dowToIndex[dow]];
+  if (!phaseDay) return baseDay;
+
+  // Combinar: nombres de WEEKLY_ROUTINE (para historial de pesos) + sets de PROGRAM
+  const exercises = baseDay.exercises.map((e, i) => {
+    const phaseEx = phaseDay.exercises?.[i];
+    const phaseSets = phaseEx ? parseSetCount(phaseEx.spec) : null;
+    return { ...e, sets: phaseSets || e.sets };
+  });
+
+  return { ...baseDay, exercises, phaseNote: phaseDay.note };
 }
 
 function getProgressWeeks() {
@@ -794,11 +828,11 @@ function renderDash() {
         <div class="prog-fill" style="width:${progPct}%;border-radius:10px"></div>
       </div>
       <div style="font-size:12px;color:var(--muted);margin-top:8px;text-align:center">
-        ${semanasCompletadas === 0 ? 'Semana 1 en curso — el camino empieza hoy 💪' :
-          semanasCompletadas < 8 ? `Fase 1 completada ${semanasCompletadas < 4 ? 'parcialmente' : '✅'} — seguís en re-activación` :
-          semanasCompletadas < 12 ? 'En plena Fase 2 — volumen y cargas aumentando 🔥' :
-          semanasCompletadas < 24 ? 'Fase 3 — intensificación, pico de forma ⚡' :
-          '¡Meta alcanzada! Bestia desbloqueada 🏆'}
+        ${semanasCompletadas === 0 ? 'Semana 1 — Fase 1 en curso 💪' :
+          semanasCompletadas < 4 ? `Fase 1 — semana ${semanasCompletadas + 1}/4 en curso 💪` :
+          semanasCompletadas < 12 ? `🔥 FASE 2 — semana ${semanasCompletadas - 3}/8 · Drops y rest-pause` :
+          semanasCompletadas < 24 ? `⚡ FASE 3 — semana ${semanasCompletadas - 11}/12 · Intensidad máxima` :
+          '🏆 ¡Meta alcanzada! 24 semanas completadas'}
       </div>
     </div>
 
@@ -861,16 +895,11 @@ let logState = {
 
 function startWorkoutFromRoutine() {
   const dow = getDayOfWeek();
-  const dayData = dow === 6 ? getSaturdayRoutine() : WEEKLY_ROUTINE[dow];
-  const exercises = getExercisesWithDefaults();
-  
-  if (exercises.length > 0) {
-    console.log('  Ex1:', exercises[0].name, exercises[0].sets[0]);
-  }
+  const dayData = getPhaseRoutineDay(dow);
   logState = {
     date: today(),
     muscleGroups: [...(dayData?.groups || [])],
-    exercises: exercises,
+    exercises: getExercisesWithDefaults(),
     notes: ''
   };
   navigate('log');
@@ -889,6 +918,13 @@ function renderLog() {
   // Progreso hacia la meta
   const semanasCompletadas = getProgressWeeks();
   const progPct = Math.round((semanasCompletadas / GOAL_WEEKS) * 100);
+  const phaseIndex = getCurrentPhaseIndex();
+  const phaseColors = ['#7c3aed', '#ec4899', '#f59e0b'];
+  const phaseColor = phaseColors[phaseIndex];
+  const phaseLabel = PROGRAM[phaseIndex]?.phase || '';
+  const dow = getDayOfWeek();
+  const phaseDay = (dow >= 1 && dow <= 5) ? PROGRAM[phaseIndex]?.days?.[{1:0,2:1,3:2,4:3,5:4}[dow]] : null;
+  const phaseNote = phaseDay?.note || '';
   const progressHTML = `
     <div class="card" style="border-left:4px solid var(--accent)">
       <div class="card-title"><span class="dot" style="background:var(--accent)"></span>Progreso hacia la meta</div>
@@ -899,6 +935,11 @@ function renderLog() {
         <strong>${semanasCompletadas}/${GOAL_WEEKS}</strong> semanas completadas · <strong>${progPct}%</strong> completado
       </div>
     </div>
+    ${phaseNote ? `
+    <div class="card" style="border-left:4px solid ${phaseColor};background:linear-gradient(135deg,${phaseColor}18 0%,${phaseColor}08 100%)">
+      <div style="font-size:11px;font-weight:700;color:${phaseColor};letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">${phaseLabel}</div>
+      <div style="font-size:13px;color:var(--text-secondary);line-height:1.5">${phaseNote}</div>
+    </div>` : ''}
   `;
 
   page.innerHTML = `
