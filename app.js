@@ -176,21 +176,6 @@ const WEEKLY_ROUTINE = {
   0: { label: 'DESCANSO', emoji: '😴', groups: [], note: 'Domingo. Recargar para la semana.', exercises: [] },
 };
 
-// ─── FRASES MOTIVACIONALES ────────────────────
-const QUOTES = [
-  'El cuerpo que querés está del otro lado del esfuerzo que evitás.',
-  'En invierno se construye el verano. Levantate.',
-  'Cada repetición que hacés cuando no querés vale el doble.',
-  'No es el gym que te da el cuerpo, es la constancia.',
-  'Los glúteos no van a crecer solos. Jueves sagrado.',
-  'Flaco hoy. Bestia en 6 meses. Depende de vos.',
-  'La motivación te arranca. El hábito te lleva.',
-  'Cada kilo más en la barra es un kilo más cerca del objetivo.',
-  'Tu yo del futuro te va a agradecer que fuiste hoy.',
-  'Afuera hace frío. Adentro se forjan campeones.',
-  'No comparés tu capítulo 1 con el capítulo 20 de otro.',
-  'El dolor de no intentarlo dura más que el de entrenar.',
-];
 
 // ─── PROGRAMA COMPLETO ────────────────────────
 const PROGRAM = [
@@ -708,7 +693,6 @@ function renderDash() {
   const dow = getDayOfWeek();
   let dayData = dow === 6 ? getSaturdayRoutine() : WEEKLY_ROUTINE[dow];
   const streak = getStreak();
-  const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
 
   // Métricas híbridas
   const SESSIONS_GOAL = 120; // 5 días × 24 semanas
@@ -855,10 +839,6 @@ function renderDash() {
       <div style="font-size:12px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1)">
         💡 Mantén este superávit calórico para crecer. Sin él, no hay ganancia de músculo.
       </div>
-    </div>
-
-    <div class="quote-card">
-      <div class="quote-text">"${quote}"</div>
     </div>
 
     <div class="card">
