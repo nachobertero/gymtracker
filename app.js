@@ -1016,8 +1016,21 @@ function toggleGroup(g) {
 }
 
 function updateSet(ei, si, field, val) {
-  if (logState.exercises[ei] && logState.exercises[ei].sets[si]) {
-    logState.exercises[ei].sets[si][field] = val;
+  const ex = logState.exercises[ei];
+  if (!ex || !ex.sets[si]) return;
+  ex.sets[si][field] = val;
+
+  // Al cambiar el peso de la PRIMERA celda, replicarlo en las demás series
+  if (field === 'weight' && si === 0) {
+    for (let k = 1; k < ex.sets.length; k++) ex.sets[k].weight = val;
+    const setsDiv = document.getElementById(`sets-${ei}`);
+    if (setsDiv) {
+      setsDiv.querySelectorAll('.sets-grid').forEach((row, idx) => {
+        if (idx === 0) return; // no tocar la celda que estás editando
+        const wInput = row.querySelector('input[type="number"]');
+        if (wInput) wInput.value = val;
+      });
+    }
   }
 }
 
