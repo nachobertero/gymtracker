@@ -112,7 +112,22 @@ const WEEKLY_ROUTINE = {
       { name: '★ Crunch con peso 3×15 (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
-  2: { // Martes ~55 min
+  2: { // Martes ~70 min — DÍA NUEVO DE CUÁDRICEPS
+    label: 'PIERNA — CUÁDRICEPS',
+    emoji: '🔥',
+    groups: ['Piernas'],
+    note: 'Día nuevo de cuádriceps. ~70 min. Acá crecen las piernas: sentadilla pesada + prensa, hack y extensiones.',
+    exercises: [
+      { name: 'Sentadilla con barra (profunda)', sets: 4, reps: '6-8', key: true },
+      { name: 'Prensa de piernas', sets: 4, reps: '10-12', key: true },
+      { name: 'Hack squat', sets: 3, reps: '10-12', key: true },
+      { name: 'Extensión de cuádriceps', sets: 3, reps: '12-15' },
+      { name: 'Zancadas con mancuernas', sets: 3, reps: '10 c/lado' },
+      { name: 'Elevación de talones', sets: 4, reps: '15-20' },
+      { name: '★ Plancha 3×40s (pausa activa)', sets: null, reps: null, pause: true },
+    ]
+  },
+  3: { // Miércoles ~55 min
     label: 'ESPALDA + BÍCEPS',
     emoji: '🏋️',
     groups: ['Espalda', 'Bíceps'],
@@ -126,50 +141,33 @@ const WEEKLY_ROUTINE = {
       { name: '★ Plancha 3×40s (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
-  3: { // Miércoles ~60 min
+  4: { // Jueves ~60 min
     label: 'HOMBROS + CORE',
     emoji: '🎯',
     groups: ['Hombros', 'Core'],
-    note: 'Pre-fútbol. ~60 min. Press militar pesado (Mentzer) + hombros completos + trapecios.',
+    note: '~60 min. Press militar pesado (Mentzer) + hombros completos + trapecios.',
     exercises: [
       { name: 'Press militar con barra', sets: 4, reps: '5-7', key: true },
       { name: 'Elevaciones laterales', sets: 4, reps: '12-15' },
       { name: 'Pájaro (deltoides posterior)', sets: 3, reps: '15' },
       { name: 'Face pulls en polea', sets: 3, reps: '15' },
       { name: 'Encogimientos con barra', sets: 3, reps: '12-15', key: true },
-      { name: 'Patada de glúteo en polea', sets: 2, reps: '15 c/lado' },
       { name: '★ Russian twist con disco 3×20 (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
-  4: { // Jueves ~70 min
-    label: 'PIERNAS + GLÚTEOS',
-    emoji: '🔥',
-    groups: ['Piernas', 'Glúteos'],
-    note: 'El día más importante. ~70 min. Sentadilla y PDR muy pesados (Mentzer).',
+  5: { // Viernes ~70 min — GLÚTEOS / ISQUIOS
+    label: 'PIERNA — GLÚTEOS / ISQUIOS',
+    emoji: '🍑',
+    groups: ['Glúteos', 'Piernas'],
+    note: 'Posterior puro. ~70 min. Hip thrust y peso muerto rumano pesados (Mentzer). Sin sentadilla (ya fue el martes).',
     exercises: [
-      { name: 'Sentadilla con barra (profunda)', sets: 3, reps: '4-6', key: true },
       { name: 'Hip thrust con barra (pausa 2s arriba)', sets: 4, reps: '8-10', key: true },
       { name: 'Peso muerto rumano', sets: 4, reps: '6-8', key: true },
       { name: 'Sentadilla búlgara', sets: 3, reps: '8-10 c/lado' },
+      { name: 'Curl de isquiotibiales', sets: 3, reps: '12' },
       { name: 'Abductor en máquina (peso alto)', sets: 3, reps: '15', key: true },
       { name: 'Patada de glúteo en polea', sets: 3, reps: '12 c/lado', key: true },
-      { name: 'Elevación de talones', sets: 3, reps: '20' },
       { name: '★ Elevación de piernas colgado 3×12 (pausa activa)', sets: null, reps: null, pause: true },
-    ]
-  },
-  5: { // Viernes ~60 min
-    label: 'FULL BODY',
-    emoji: '⚡',
-    groups: ['Full Body', 'Glúteos'],
-    note: 'Post-5k. ~60 min. Peso muerto máximo (Mentzer) + tren superior + glúteos.',
-    exercises: [
-      { name: 'Peso muerto convencional', sets: 3, reps: '3-5', key: true },
-      { name: 'Dominadas', sets: 3, reps: 'Máx', key: true },
-      { name: 'Press de banca', sets: 3, reps: '6-8' },
-      { name: 'Remo con mancuerna unilateral', sets: 3, reps: '10 c/lado' },
-      { name: 'Extensión de tríceps en polea (overhead)', sets: 3, reps: '10', key: true },
-      { name: 'Hip thrust con barra (liviano, squeeze)', sets: 3, reps: '15', key: true },
-      { name: '★ Rueda abdominal 3×12 (pausa activa)', sets: null, reps: null, pause: true },
     ]
   },
   6: { label: 'DESCANSO', emoji: '😴', groups: [], note: 'Recuperación activa. El músculo crece mientras descansás.', exercises: [] },
@@ -200,7 +198,20 @@ const PROGRAM = [
         ]
       },
       {
-        day: 'MARTES', label: 'ESPALDA + BÍCEPS', emoji: '🏋️',
+        day: 'MARTES', label: 'PIERNA — CUÁDRICEPS', emoji: '🔥',
+        note: 'DÍA NUEVO. Acá crecen las piernas. Sentadilla pesada Mentzer + volumen de cuádriceps.',
+        exercises: [
+          { name: 'Sentadilla con barra (profunda)', spec: '4×6-8 (Mentzer)', key: true },
+          { name: 'Prensa de piernas', spec: '4×10-12', key: true },
+          { name: 'Hack squat', spec: '3×10-12', key: true },
+          { name: 'Extensión de cuádriceps', spec: '3×12-15' },
+          { name: 'Zancadas con mancuernas', spec: '3×10 c/lado' },
+          { name: 'Elevación de talones', spec: '4×15-20' },
+          { name: '★ Plancha 3×40s (pausa activa)', spec: '', pause: true },
+        ]
+      },
+      {
+        day: 'MIÉRCOLES', label: 'ESPALDA + BÍCEPS', emoji: '🏋️',
         note: 'Dominadas + Remo = espalda COMPLETA. Compuestos pesados.',
         exercises: [
           { name: 'Dominadas (lastradas si podés)', spec: '4×Máx', key: true },
@@ -212,43 +223,28 @@ const PROGRAM = [
         ]
       },
       {
-        day: 'MIÉRCOLES', label: 'HOMBROS + CORE', emoji: '🎯',
-        note: 'Pre-fútbol. Press militar PESADO + trapecios anchos.',
+        day: 'JUEVES', label: 'HOMBROS + CORE', emoji: '🎯',
+        note: 'Press militar PESADO + trapecios anchos.',
         exercises: [
           { name: 'Press militar con barra', spec: '4×5-7 (Mentzer)', key: true },
           { name: 'Elevaciones laterales', spec: '4×12-15' },
           { name: 'Pájaro (deltoides posterior)', spec: '3×15' },
           { name: 'Face pulls en polea', spec: '3×15' },
           { name: 'Encogimientos con barra', spec: '3×12-15', key: true },
-          { name: 'Patada de glúteo en polea', spec: '2×15 c/lado' },
           { name: '★ Russian twist con disco 3×20 (pausa activa)', spec: '', pause: true },
         ]
       },
       {
-        day: 'JUEVES', label: 'PIERNAS + GLÚTEOS ⭐', emoji: '🔥',
-        note: 'Sentadilla pesada. Hip thrust pesado. Glúteos al máximo.',
+        day: 'VIERNES', label: 'PIERNA — GLÚTEOS / ISQUIOS', emoji: '🍑',
+        note: 'Posterior puro. Hip thrust y peso muerto rumano pesados. Sin sentadilla (ya fue el martes).',
         exercises: [
-          { name: 'Sentadilla con barra (profunda)', spec: '3×4-6 (Mentzer)', key: true },
           { name: 'Hip thrust con barra (pausa 2s)', spec: '4×8-10', key: true },
           { name: 'Peso muerto rumano', spec: '4×6-8 (Mentzer)', key: true },
           { name: 'Sentadilla búlgara', spec: '3×8-10 c/lado' },
+          { name: 'Curl de isquiotibiales', spec: '3×12' },
           { name: 'Abductor en máquina', spec: '3×15' },
           { name: 'Patada de glúteo en polea', spec: '3×12 c/lado' },
-          { name: 'Elevación de talones', spec: '3×20' },
           { name: '★ Elevación de piernas colgado 3×12 (pausa activa)', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'VIERNES', label: 'FULL BODY', emoji: '⚡',
-        note: 'Peso muerto MÁXIMO. 5k después. Glúteos x2 en semana.',
-        exercises: [
-          { name: 'Peso muerto convencional', spec: '3×3-5 (Mentzer)', key: true },
-          { name: 'Dominadas', spec: '3×Máx' },
-          { name: 'Press de banca', spec: '3×6-8' },
-          { name: 'Remo con mancuerna unilateral', spec: '3×10 c/lado' },
-          { name: 'Extensión de tríceps en polea (overhead)', spec: '3×10' },
-          { name: 'Hip thrust con barra (liviano, squeeze)', spec: '3×15' },
-          { name: '★ Rueda abdominal 3×12 (pausa activa)', spec: '', pause: true },
         ]
       },
     ]
@@ -274,11 +270,24 @@ const PROGRAM = [
         ]
       },
       {
-        day: 'MARTES', label: 'ESPALDA + BÍCEPS', emoji: '🏋️',
+        day: 'MARTES', label: 'PIERNA — CUÁDRICEPS', emoji: '🔥',
+        note: 'Cuádriceps con intensidad. Sentadilla rest-pause, prensa y extensiones con DROP.',
+        exercises: [
+          { name: 'Sentadilla con barra (rest-pause)', spec: '4×6-8 + rest-pause', key: true },
+          { name: 'Prensa de piernas + drop set', spec: '4×10-12 + drop', key: true },
+          { name: 'Hack squat + drop set', spec: '3×10-12 + drop', key: true },
+          { name: 'Extensión de cuádriceps + drop set x2', spec: '3×12-15 + 2 drops' },
+          { name: 'Zancadas con mancuernas', spec: '3×10 c/lado' },
+          { name: 'Elevación de talones', spec: '4×15-20' },
+          { name: '★ Plancha 3×40s (pausa activa)', spec: '', pause: true },
+        ]
+      },
+      {
+        day: 'MIÉRCOLES', label: 'ESPALDA + BÍCEPS', emoji: '🏋️',
         note: 'Remo: REST-PAUSE en último set. Curl: DROP SET final.',
         exercises: [
           { name: 'Dominadas (lastradas si podés)', spec: '4×Máx', key: true },
-          { name: 'Remo con barra (rest-pause en set 4)', spec: '4×4-6 + rest-pause final', key: true },
+          { name: 'Remo en máquina (rest-pause en set 4)', spec: '4×4-6 + rest-pause final', key: true },
           { name: 'Remo con mancuerna unilateral', spec: '4×10 c/lado' },
           { name: 'Curl con barra', spec: '3×6-8 + drop set' },
           { name: 'Curl martillo', spec: '3×10 + drop set' },
@@ -286,7 +295,7 @@ const PROGRAM = [
         ]
       },
       {
-        day: 'MIÉRCOLES', label: 'HOMBROS + CORE', emoji: '🎯',
+        day: 'JUEVES', label: 'HOMBROS + CORE', emoji: '🎯',
         note: 'Press militar: +1 serie. Laterales con 2 DROPS. Encogimientos con drop.',
         exercises: [
           { name: 'Press militar con barra', spec: '4×5-7 + drop set', key: true },
@@ -294,35 +303,20 @@ const PROGRAM = [
           { name: 'Pájaro (deltoides posterior)', spec: '3×15 + drop set' },
           { name: 'Face pulls en polea', spec: '3×15 + drop set' },
           { name: 'Encogimientos con barra', spec: '3×12-15 + drop set', key: true },
-          { name: 'Patada de glúteo en polea', spec: '2×15 c/lado' },
           { name: '★ Russian twist con disco 3×20 (pausa activa)', spec: '', pause: true },
         ]
       },
       {
-        day: 'JUEVES', label: 'PIERNAS + GLÚTEOS ⭐', emoji: '🔥',
-        note: 'Sentadilla -1 serie pero más pesada. Hip thrust +1. Patada con DROP.',
+        day: 'VIERNES', label: 'PIERNA — GLÚTEOS / ISQUIOS', emoji: '🍑',
+        note: 'Posterior puro. Hip thrust +1 serie. PDR rest-pause. Patada con DROP. Sin sentadilla.',
         exercises: [
-          { name: 'Sentadilla con barra + drop set', spec: '3×4-6 + drop', key: true },
           { name: 'Hip thrust con barra', spec: '5×8-10 (pausa 2s)', key: true },
           { name: 'Peso muerto rumano (rest-pause)', spec: '4×6-8 + rest-pause', key: true },
           { name: 'Sentadilla búlgara', spec: '4×8-10 c/lado' },
+          { name: 'Curl de isquiotibiales + drop set', spec: '3×12 + drop' },
           { name: 'Abductor en máquina', spec: '4×15' },
           { name: 'Patada de glúteo en polea + drop set', spec: '4×12 c/lado', key: true },
-          { name: 'Elevación de talones', spec: '4×20' },
           { name: '★ Elevación de piernas colgado 3×12 (pausa activa)', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'VIERNES', label: 'FULL BODY', emoji: '⚡',
-        note: 'Peso muerto (rest-pause). Overhead extension con DROP.',
-        exercises: [
-          { name: 'Peso muerto convencional (rest-pause)', spec: '3×3-5 + rest-pause', key: true },
-          { name: 'Dominadas', spec: '4×Máx' },
-          { name: 'Press de banca', spec: '3×6-8 + drop set' },
-          { name: 'Remo con mancuerna unilateral', spec: '3×10 c/lado' },
-          { name: 'Extensión de tríceps en polea (overhead)', spec: '3×10 + drop set' },
-          { name: 'Hip thrust con barra (liviano, squeeze)', spec: '3×15' },
-          { name: '★ Rueda abdominal 3×12 (pausa activa)', spec: '', pause: true },
         ]
       },
     ]
@@ -348,11 +342,24 @@ const PROGRAM = [
         ]
       },
       {
-        day: 'MARTES', label: 'ESPALDA + BÍCEPS', emoji: '🏋️',
+        day: 'MARTES', label: 'PIERNA — CUÁDRICEPS', emoji: '🔥',
+        note: 'Cuádriceps al límite. Rest-pause en sentadilla, drops en todo el aislamiento.',
+        exercises: [
+          { name: 'Sentadilla con barra (rest-pause sets 3 y 4)', spec: '4×6-8 + rest-pause', key: true },
+          { name: 'Prensa de piernas + drop set x2', spec: '4×10-12 + 2 drops', key: true },
+          { name: 'Hack squat + drop set', spec: '4×10-12 + drop', key: true },
+          { name: 'Extensión de cuádriceps + drop set x2', spec: '3×12-15 + 2 drops' },
+          { name: 'Zancadas con mancuernas', spec: '3×10 c/lado' },
+          { name: 'Elevación de talones + drop set', spec: '4×15-20 + drop' },
+          { name: '★ Plancha 3×40s (pausa activa)', spec: '', pause: true },
+        ]
+      },
+      {
+        day: 'MIÉRCOLES', label: 'ESPALDA + BÍCEPS', emoji: '🏋️',
         note: 'Máximo pump. Cada ejercicio con técnicas avanzadas.',
         exercises: [
           { name: 'Dominadas (lastradas) + drop set', spec: '4×Máx + drop' },
-          { name: 'Remo con barra (rest-pause sets 3 y 4)', spec: '4×4-6 + rest-pause', key: true },
+          { name: 'Remo en máquina (rest-pause sets 3 y 4)', spec: '4×4-6 + rest-pause', key: true },
           { name: 'Remo con mancuerna + drop set', spec: '4×10 c/lado + drop' },
           { name: 'Curl con barra (rest-pause)', spec: '4×6-8 + rest-pause' },
           { name: 'Curl martillo + drop set x2', spec: '3×10 + 2 drops' },
@@ -360,7 +367,7 @@ const PROGRAM = [
         ]
       },
       {
-        day: 'MIÉRCOLES', label: 'HOMBROS + CORE', emoji: '🎯',
+        day: 'JUEVES', label: 'HOMBROS + CORE', emoji: '🎯',
         note: 'Press: rest-pause. Laterales: 3 drops. Encogimientos: máxima intensidad.',
         exercises: [
           { name: 'Press militar con barra (rest-pause)', spec: '4×5-7 + rest-pause', key: true },
@@ -368,35 +375,19 @@ const PROGRAM = [
           { name: 'Pájaro (deltoides posterior) + drop set', spec: '4×15 + drop' },
           { name: 'Face pulls en polea + drop set', spec: '3×15 + drop' },
           { name: 'Encogimientos con barra + drop set x2', spec: '3×12-15 + 2 drops', key: true },
-          { name: 'Patada de glúteo en polea', spec: '2×15 c/lado' },
           { name: '★ Hollow hold 3×30s (pausa activa)', spec: '', pause: true },
         ]
       },
       {
-        day: 'JUEVES', label: 'PIERNAS + GLÚTEOS ⭐', emoji: '🔥',
-        note: 'Glúteos MÁXIMOS. Cada set estratégico. Hip thrust + pesado → liviano sin parar.',
+        day: 'VIERNES', label: 'PIERNA — GLÚTEOS / ISQUIOS', emoji: '🍑',
+        note: 'Glúteos MÁXIMOS. Hip thrust pesado → liviano sin parar. Superserie abductor+patada. Sin sentadilla.',
         exercises: [
-          { name: 'Sentadilla con barra (rest-pause)', spec: '4×4-6 + rest-pause', key: true },
           { name: 'Hip thrust con barra (mecánico: 5kg más → liviano, sin parar)', spec: '5×8-10', key: true },
           { name: 'Peso muerto rumano + drop set', spec: '4×6-8 + drop', key: true },
           { name: 'Sentadilla búlgara + drop set', spec: '4×8-10 c/lado + drop' },
+          { name: 'Curl de isquiotibiales + drop set', spec: '3×12 + drop' },
           { name: 'Superserie: Abductor + Patada polea', spec: '4×15+12 c/lado', key: true },
-          { name: 'Prensa de piernas + drop set', spec: '3×10 + drop' },
-          { name: 'Elevación de talones', spec: '4×20' },
           { name: '★ Elevación de piernas + oblicuos 3×15', spec: '', pause: true },
-        ]
-      },
-      {
-        day: 'VIERNES', label: 'FULL BODY', emoji: '⚡',
-        note: 'Intenta nuevo PR en peso muerto. Hip thrust final: máximo pump.',
-        exercises: [
-          { name: 'Peso muerto convencional (PR intent + rest-pause)', spec: '3×3-5 + rest-pause', key: true },
-          { name: 'Dominadas (lastradas)', spec: '4×Máx + drop set' },
-          { name: 'Press de banca + drop set', spec: '3×6-8 + drop' },
-          { name: 'Remo con mancuerna + drop set', spec: '3×10 c/lado + drop' },
-          { name: 'Superserie: Extensión overhead + Curl polea', spec: '3×10+12' },
-          { name: 'Hip thrust liviano (squeeze total)', spec: '3×15' },
-          { name: '★ Rueda abdominal + planchas 3×12+40s', spec: '', pause: true },
         ]
       },
     ]
@@ -708,12 +699,12 @@ function renderDash() {
   const calsBase = 3200;
   let calsHoy = calsBase;
   let motivoExtra = '';
-  if (dow === 1 || dow === 3) { // Lunes o Miércoles = fútbol
+  if (dow === 1) { // Lunes = fútbol
     calsHoy = 3600;
     motivoExtra = '+ 400 kcal por fútbol';
-  } else if (dow === 5) { // Viernes = 5k
-    calsHoy = 3400;
-    motivoExtra = '+ 200 kcal por 5k';
+  } else if (dow === 2 || dow === 5) { // Martes y Viernes = día de pierna pesado
+    calsHoy = 3500;
+    motivoExtra = '+ 300 kcal por día de pierna';
   }
 
   const days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
@@ -1570,8 +1561,8 @@ const DIET_PLAN = {
       { name: 'Antes de dormir', items: '200g yogur griego sin azúcar · 40g frutos secos', kcal: '~350' },
     ]
   },
-  2: { // Martes
-    day: 'MARTES',
+  2: { // Martes (pierna pesada)
+    day: 'MARTES — PIERNA (pesado)',
     meals: [
       { name: 'Desayuno', items: '6 huevos revueltos con queso · Pan integral tostado · Almendras · Café sin azúcar', kcal: '~700' },
       { name: 'Almuerzo', items: '200g milanesas de pollo · Batata al horno · Lechuga y tomate', kcal: '~750' },
@@ -1580,19 +1571,18 @@ const DIET_PLAN = {
       { name: 'Antes de dormir', items: 'Yogur griego sin azúcar · Nueces y almendras', kcal: '~300' },
     ]
   },
-  3: { // Miércoles (con fútbol)
-    day: 'MIÉRCOLES 🏃 +fútbol',
+  3: { // Miércoles
+    day: 'MIÉRCOLES',
     meals: [
       { name: 'Desayuno', items: '6 huevos revueltos · 3 tostadas integrales · Frutos secos · Té sin azúcar', kcal: '~850' },
       { name: 'Almuerzo', items: '250g pechuga a la plancha · Quinoa o arroz integral · Ensalada colorida con aguacate', kcal: '~850' },
       { name: 'Merienda (post-gym)', items: '4-5 huevos hervidos · Pan integral · Manzana + banana', kcal: '~550' },
-      { name: 'Post-fútbol (crucial)', items: '1 licuado: 50g proteína whey + 1 banana + 30g avena + leche · O barrita proteica + fruta', kcal: '~400' },
       { name: 'Cena', items: '200g pollo · Calabacín salteado · Ajo y cebolla · Aceite de oliva', kcal: '~700' },
       { name: 'Antes de dormir', items: 'Queso cottage · Almendras tostadas', kcal: '~350' },
     ]
   },
-  4: { // Jueves
-    day: 'JUEVES - DÍA PESADO',
+  4: { // Jueves (hombros)
+    day: 'JUEVES',
     meals: [
       { name: 'Desayuno', items: '6 huevos revueltos · 2 rodajas pan integral · Nueces · Café sin azúcar', kcal: '~700' },
       { name: 'Almuerzo', items: '200g carne vacuna magra · Batata grande · Ensalada con aguacate', kcal: '~750' },
@@ -1601,13 +1591,12 @@ const DIET_PLAN = {
       { name: 'Antes de dormir', items: 'Yogur griego sin azúcar · 40g frutos secos (más que otros días)', kcal: '~350' },
     ]
   },
-  5: { // Viernes (con 5k)
-    day: 'VIERNES 🏃 +5k',
+  5: { // Viernes (pierna pesada)
+    day: 'VIERNES — PIERNA (pesado)',
     meals: [
       { name: 'Desayuno', items: '5 huevos revueltos · Pan integral tostado · Almendras · Café con CCL', kcal: '~750' },
       { name: 'Almuerzo', items: '250g pechuga a la plancha · Arroz integral o batata grande · Ensalada verde', kcal: '~800' },
       { name: 'Merienda (post-gym)', items: '4 huevos hervidos · Queso fresco · 1 fruta + banana', kcal: '~500' },
-      { name: 'Post-5k (crucial)', items: '1 licuado: 30g proteína whey + banana + avena · O bebida isotónica + fruta', kcal: '~300' },
       { name: 'Cena', items: '200g carne vacuna · Verduras salteadas · Aceite de oliva', kcal: '~700' },
       { name: 'Antes de dormir', items: 'Yogur griego sin azúcar · Frutos secos variados', kcal: '~350' },
     ]
