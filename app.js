@@ -1551,7 +1551,7 @@ function toggleRDay(id) {
 // ─── PLAN DE DIETA ────────────────────────────
 const DIET_PLAN = {
   1: { // Lunes (con fútbol)
-    day: 'LUNES 🏃 +fútbol',
+    day: 'LUNES ⚽ +fútbol',
     meals: [
       { name: 'Desayuno', items: '6 huevos revueltos · 3 tostadas pan integral · 40g nueces · Café sin azúcar', kcal: '~850' },
       { name: 'Almuerzo', items: '250g pechuga o milanesas · Batata grande o arroz integral · Ensalada con aceite de oliva', kcal: '~850' },
