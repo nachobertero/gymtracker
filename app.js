@@ -513,20 +513,21 @@ function getDayOfWeek() {
 }
 
 function getStreak() {
-  // La racha = cantidad de días de entrenamiento encadenados.
-  // Solo se reinicia si dejás de entrenar más de MAX_GAP_DAYS seguidos.
-  // Saltarte un día suelto (un viernes, etc.) NO la rompe.
+  // Racha estricta: faltar un día de semana la rompe.
+  // Sábado y domingo son opcionales (no rompen).
   if (!workouts.length) return 0;
-  const MAX_GAP_DAYS = 14;
-  // Fechas únicas, ordenadas ascendente
-  const dates = [...new Set(workouts.map(w => w.date))].sort();
-  let streak = 1;
-  for (let i = dates.length - 1; i > 0; i--) {
-    const cur = new Date(dates[i] + 'T00:00:00');
-    const prev = new Date(dates[i - 1] + 'T00:00:00');
-    const gapDays = Math.round((cur - prev) / 86400000);
-    if (gapDays <= MAX_GAP_DAYS) streak++;
-    else break; // hubo un parón real → la racha arranca después del parón
+  const dates = new Set(workouts.map(w => w.date));
+  let streak = 0;
+  const d = new Date(); d.setHours(0, 0, 0, 0);
+  for (let i = 0; i < 300; i++) {
+    const dow = d.getDay();
+    if (dow !== 0 && dow !== 6) { // solo días de semana
+      // Fecha local en formato YYYY-MM-DD (sin bug de UTC)
+      const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      if (dates.has(ds)) streak++;
+      else if (i > 0) break; // hoy todavía puede no estar hecho; un día previo faltante rompe
+    }
+    d.setDate(d.getDate() - 1);
   }
   return streak;
 }
