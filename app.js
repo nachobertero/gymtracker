@@ -497,8 +497,9 @@ async function syncWorkoutToSupabase(workout) {
 
 // ─── HELPERS ──────────────────────────────────
 function today() {
+  // Fecha LOCAL (no UTC). Evita que un entrenamiento de noche se guarde con el día siguiente.
   const d = new Date();
-  return d.toISOString().split('T')[0];
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
 function formatDate(dateStr) {
@@ -2097,6 +2098,7 @@ async function syncToSupabase() {
         date: wo.date,
         day_of_week: wo.day_of_week,
         exercises: wo.exercises,
+        muscle_groups: wo.muscleGroups || [],
         notes: wo.notes || null,
         updated_at: new Date().toISOString()
       });
@@ -2133,11 +2135,35 @@ async function syncToSupabase() {
   toast('✅ Sincronizado con la nube');
 }
 
+// Sube todos los workouts locales a la nube (idempotente por id).
+// Evita perder entrenamientos guardados local que nunca llegaron a Supabase.
+async function pushLocalWorkoutsToSupabase() {
+  if (!currentUser || !workouts.length) return;
+  for (const wo of workouts) {
+    const { error } = await supabase
+      .from('workouts')
+      .upsert({
+        id: wo.id,
+        user_id: currentUser.id,
+        date: wo.date,
+        day_of_week: wo.day_of_week,
+        exercises: wo.exercises,
+        muscle_groups: wo.muscleGroups || [],
+        notes: wo.notes || null,
+        updated_at: new Date().toISOString()
+      });
+    if (error) console.error('Error empujando workout local:', wo.date, error.message);
+  }
+}
+
 async function syncFromSupabase() {
   if (!currentUser) { console.log('❌ syncFromSupabase: no user'); return; }
   console.log('🔄 Sincronizando desde Supabase para:', currentUser.email);
 
-  // Bajar TODO de Supabase — es la fuente de verdad
+  // PRIMERO: empujar lo local a la nube para no perder nada que no se haya subido
+  await pushLocalWorkoutsToSupabase();
+
+  // LUEGO: bajar TODO de Supabase (ya incluye lo que acabamos de empujar)
   const { data: woData, error: woError } = await supabase
     .from('workouts')
     .select('*')
