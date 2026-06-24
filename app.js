@@ -868,6 +868,37 @@ let logState = {
   notes: '',
 };
 
+// ─── AUTOGUARDADO DEL ENTRENAMIENTO EN CURSO ──────────────
+// iOS mata la PWA tras 1-2 min en segundo plano. Esto guarda lo que estás
+// cargando para que al volver no pierdas nada.
+function persistLog() {
+  try {
+    if (logState.exercises.length || logState.muscleGroups.length || logState.notes) {
+      localStorage.setItem('gym_logstate_v1', JSON.stringify(logState));
+    } else {
+      localStorage.removeItem('gym_logstate_v1');
+    }
+  } catch (e) {}
+}
+
+function restorePersistedLog() {
+  try {
+    const saved = localStorage.getItem('gym_logstate_v1');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed && (parsed.exercises?.length || parsed.muscleGroups?.length || parsed.notes)) {
+        logState = parsed;
+        return true;
+      }
+    }
+  } catch (e) {}
+  return false;
+}
+
+function clearPersistedLog() {
+  try { localStorage.removeItem('gym_logstate_v1'); } catch (e) {}
+}
+
 function startWorkoutFromRoutine() {
   const dow = getDayOfWeek();
   const dayData = getPhaseRoutineDay(dow);
@@ -877,6 +908,7 @@ function startWorkoutFromRoutine() {
     exercises: getExercisesWithDefaults(),
     notes: ''
   };
+  persistLog();
   navigate('log');
 }
 
@@ -925,7 +957,7 @@ function renderLog() {
     <div class="card">
       <div class="form-group">
         <label>Fecha <span style="color:var(--muted);font-weight:400;font-size:12px">— podés cambiarla para registrar días anteriores</span></label>
-        <input type="date" id="log-date" value="${logState.date}" onchange="logState.date=this.value" max="${today()}">
+        <input type="date" id="log-date" value="${logState.date}" onchange="logState.date=this.value;persistLog()" max="${today()}">
       </div>
       <div class="form-group">
         <label>Grupos musculares</label>
@@ -943,7 +975,7 @@ function renderLog() {
       <div class="form-group" style="margin:0">
         <label>Notas</label>
         <textarea id="log-notes" rows="2" placeholder="Cómo te sentiste, PR, dolor..."
-          onchange="logState.notes=this.value">${logState.notes}</textarea>
+          onchange="logState.notes=this.value;persistLog()">${logState.notes}</textarea>
       </div>
     </div>
 
@@ -1008,6 +1040,7 @@ function toggleGroup(g) {
   document.querySelectorAll('.chip').forEach(c => {
     c.classList.toggle('on', logState.muscleGroups.includes(c.textContent.trim()));
   });
+  persistLog();
 }
 
 function updateSet(ei, si, field, val) {
@@ -1027,6 +1060,7 @@ function updateSet(ei, si, field, val) {
       });
     }
   }
+  persistLog();
 }
 
 function toggleSetDone(ei, si) {
@@ -1048,6 +1082,7 @@ function toggleSetDone(ei, si) {
       </div>
     `).join('');
   }
+  persistLog();
 }
 
 function markAllSetsDone(ei) {
@@ -1063,6 +1098,7 @@ function markAllSetsDone(ei) {
     const exBlock = renderExBlock(logState.exercises[ei], ei);
     cont.outerHTML = exBlock;
   }
+  persistLog();
 }
 
 function addSet(ei) {
@@ -1084,6 +1120,7 @@ function addSet(ei) {
       <button style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:0 4px;line-height:1" onclick="removeSet(${ei},${si})" title="Eliminar serie">✕</button>
     </div>
   `).join('');
+  persistLog();
 }
 
 
@@ -1105,11 +1142,13 @@ function removeSet(ei, si) {
       <button style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:0 4px;line-height:1" onclick="removeSet(${ei},${si2})" title="Eliminar serie">✕</button>
     </div>
   `).join('');
+  persistLog();
 }
 
 function removeExercise(ei) {
   logState.exercises.splice(ei, 1);
   refreshExercises();
+  persistLog();
 }
 
 function saveWorkout() {
@@ -1133,11 +1172,13 @@ function saveWorkout() {
   saveAndSyncWorkout(workout); // Sync este workout específico a Supabase
   toast('Entrenamiento guardado 💪');
   logState = { date: today(), muscleGroups: [], exercises: [], notes: '' };
+  clearPersistedLog(); // ya se guardó: borrar el autoguardado en curso
   setTimeout(() => navigate('hist'), 500);
 }
 
 function clearLog() {
   logState = { date: today(), muscleGroups: [], exercises: [], notes: '' };
+  clearPersistedLog();
   renderLog();
 }
 
@@ -1186,6 +1227,7 @@ function selectExercise(name) {
   document.getElementById('ex-modal').classList.remove('open');
   logState.exercises.push({ id: uid(), name, sets: [{ reps: '', weight: '', done: false }] });
   refreshExercises();
+  persistLog();
 }
 
 // ─── HISTORIAL ────────────────────────────────
@@ -2325,7 +2367,15 @@ function setupRealtimeListeners() {
 async function initApp() {
   document.getElementById('auth-modal').style.display = 'none';
   loadData();
+  // Restaurar entrenamiento en curso si iOS cerró la app a mitad de carga
+  const restored = restorePersistedLog();
   renderDash();
+  if (restored) {
+    setTimeout(() => {
+      toast('💪 Recuperamos tu entrenamiento en curso');
+      navigate('log');
+    }, 600);
+  }
 
   try {
     // getSession is more reliable than getUser for persistence
