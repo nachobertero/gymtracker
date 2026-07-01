@@ -1069,6 +1069,7 @@ function updateSet(ei, si, field, val) {
 }
 
 function toggleSetDone(ei, si) {
+  syncInputsToLogState(); // no perder valores tipeados al redibujar
   if (logState.exercises[ei] && logState.exercises[ei].sets[si]) {
     logState.exercises[ei].sets[si].done = !logState.exercises[ei].sets[si].done;
     const btn = document.querySelector(`#exblock-${ei} #sets-${ei} .set-done:nth-of-type(${si + 1})`);
@@ -1092,6 +1093,7 @@ function toggleSetDone(ei, si) {
 
 function markAllSetsDone(ei) {
   if (!logState.exercises[ei]) return;
+  syncInputsToLogState(); // no perder valores tipeados al redibujar
   const allDone = logState.exercises[ei].sets.every(s => s.done);
   // Toggle: si todos están done, desmarcar todos. Si alguno no está done, marcar todos.
   logState.exercises[ei].sets.forEach(set => {
@@ -1108,6 +1110,7 @@ function markAllSetsDone(ei) {
 
 function addSet(ei) {
   if (!logState.exercises[ei]) return;
+  syncInputsToLogState(); // no perder valores tipeados al redibujar
   // Smart default: copy last set weight
   const last = logState.exercises[ei].sets.slice(-1)[0];
   logState.exercises[ei].sets.push({ reps: last?.reps || '', weight: last?.weight || '', done: false });
@@ -1132,6 +1135,7 @@ function addSet(ei) {
 function removeSet(ei, si) {
   if (!logState.exercises[ei]) return;
   if (logState.exercises[ei].sets.length <= 1) return; // mínimo 1 serie
+  syncInputsToLogState(); // no perder valores tipeados al redibujar
   logState.exercises[ei].sets.splice(si, 1);
   const setsDiv = document.getElementById(`sets-${ei}`);
   if (setsDiv) setsDiv.innerHTML = logState.exercises[ei].sets.map((set, si2) => `
@@ -1156,7 +1160,25 @@ function removeExercise(ei) {
   persistLog();
 }
 
+// Lee lo que está EN PANTALLA en cada celda hacia logState.
+// Evita perder el último valor tipeado si iOS no disparó el evento del input
+// antes de tocar "Guardar".
+function syncInputsToLogState() {
+  logState.exercises.forEach((ex, ei) => {
+    const setsDiv = document.getElementById(`sets-${ei}`);
+    if (!setsDiv) return;
+    const rows = setsDiv.querySelectorAll('.sets-grid');
+    rows.forEach((row, si) => {
+      if (!ex.sets[si]) return;
+      const inputs = row.querySelectorAll('input');
+      if (inputs[0]) ex.sets[si].reps = inputs[0].value;
+      if (inputs[1]) ex.sets[si].weight = inputs[1].value;
+    });
+  });
+}
+
 function saveWorkout() {
+  syncInputsToLogState(); // capturar lo que está en pantalla antes de guardar
   const workout = {
     id: uid(),
     date: logState.date,
