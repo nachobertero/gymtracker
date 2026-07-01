@@ -548,18 +548,23 @@ function getWeekVolume() {
 }
 
 function getLastWeightForExercise(exerciseName) {
-  // Busca en orden inverso (más reciente primero) el último peso registrado para un ejercicio
+  // Devuelve el peso registrado en la fecha MÁS RECIENTE para un ejercicio.
+  // (No depende del orden del array — compara fechas.)
   if (!exerciseName || !workouts.length) return null;
   const nameLower = exerciseName.toLowerCase().trim();
-  for (let i = workouts.length - 1; i >= 0; i--) {
-    const w = workouts[i];
+  let bestDate = null;
+  let bestWeight = null;
+  for (const w of workouts) {
     const ex = w.exercises.find(e => e.name.toLowerCase().trim() === nameLower);
     if (ex && ex.sets && ex.sets.length > 0) {
       const maxWeight = Math.max(...ex.sets.map(s => s.weight || 0));
-      if (maxWeight > 0) return maxWeight.toString();
+      if (maxWeight > 0 && (bestDate === null || w.date > bestDate)) {
+        bestDate = w.date;
+        bestWeight = maxWeight;
+      }
     }
   }
-  return null;
+  return bestWeight !== null ? bestWeight.toString() : null;
 }
 
 function parseMaxReps(repsStr) {
